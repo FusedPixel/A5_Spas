@@ -133,11 +133,11 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:44px;
+    min-width:40px;
   }
-  .swatch{width:36px;height:36px}
+  .swatch{width:32px;height:32px}
   .swatch:after{inset:-3px}
-  .label{margin-top:4px;font-size:7px;max-width:52px}
+  .label{margin-top:3px;font-size:7px;max-width:48px}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -260,7 +260,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v40';
+const ASSET_VERSION = 'v41';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -804,65 +804,72 @@ function fitModel() {
   model.position.sub(center);
 
   const maxDim = Math.max(size.x, size.y, size.z);
-  const dist = maxDim * 1.55;
-
   camera.near = Math.max(0.01, maxDim / 1000);
   camera.far = Math.max(100, maxDim * 20);
 
-  fitReferenceHeight = Math.max(1, document.getElementById('stage').clientHeight);
-  fitReferenceAspect = Math.max(0.1, document.getElementById('stage').clientWidth / fitReferenceHeight);
-  fitReferenceDistance = dist;
   fitDirection.set(0.95, 0.55, 0.95).normalize();
-  fitTarget.set(0, -size.y * 0.12, 0);
+  fitTarget.set(0, -size.y * 0.08, 0);
 
   controls.target.copy(fitTarget);
   controls.minDistance = maxDim * 0.55;
-  controls.maxDistance = maxDim * 4;
-  updateResponsiveFit();
+  controls.maxDistance = maxDim * 4.5;
+
+  // Reset to a true dynamic fit for the current viewport. This is deliberately
+  // based on the model's bounding sphere rather than the viewport size at the
+  // moment the page first loaded, so portrait/mobile resizing stays reliable.
+  const fitDistance = calculateDynamicFitDistance();
+  camera.position.copy(fitTarget).addScaledVector(fitDirection, fitDistance);
+  controls.update();
+
+  lastFitDistance = fitDistance;
 }
 
-function updateResponsiveFit() {
-  if (!model || !controls || !fitReferenceHeight) return;
+let lastFitDistance = 1;
+
+function calculateDynamicFitDistance() {
+  if (!model) return lastFitDistance;
 
   const stage = document.getElementById('stage');
   const w = Math.max(1, stage.clientWidth);
   const h = Math.max(1, stage.clientHeight);
-  const aspect = w / h;
-
-  // As the available page gets smaller/narrower, increase camera distance
-  // so the spa remains fully framed instead of being cropped or feeling oversized.
   const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
 
-  let heightFactor = fitReferenceHeight / h;
-  const widthFactor = Math.sqrt(fitReferenceAspect / Math.max(0.1, aspect));
+  const panel = document.getElementById('panel');
+  const panelHeight = portrait && panel ? panel.clientHeight : 0;
+  const visibleHeight = Math.max(1, h - panelHeight);
+  const visibleAspect = w / visibleHeight;
 
-  // Portrait mode leaves less vertical room because the options bar overlays
-  // the bottom of the viewer. Fit against the unobstructed height and add a
-  // small safety margin so the entire spa stays visible on first load.
-  if (portrait) {
-    const panel = document.getElementById('panel');
-    const panelHeight = panel ? panel.clientHeight : 0;
-    const visibleHeight = Math.max(1, h - panelHeight);
-    heightFactor = fitReferenceHeight / visibleHeight;
-  }
+  const box = new THREE.Box3().setFromObject(model);
+  const sphere = new THREE.Sphere();
+  box.getBoundingSphere(sphere);
 
-  const portraitSafety = portrait ? 1.10 : 1.0;
-  const factor = Math.max(0.72, heightFactor, widthFactor) * portraitSafety;
+  const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+  const horizontalFov = 2 * Math.atan(Math.tan(verticalFov * 0.5) * Math.max(0.1, visibleAspect));
+  const limitingFov = Math.min(verticalFov, horizontalFov);
 
-  const dist = fitReferenceDistance * factor;
+  // A little breathing room keeps the complete spa visible without looking tiny.
+  const margin = portrait ? 1.22 : 1.12;
+  return sphere.radius / Math.tan(limitingFov * 0.5) * margin;
+}
 
-  // In narrow portrait mode, keep the spa centred in the unobstructed
-  // viewer area above the options bar. Desktop/landscape is unchanged.
-  if (portrait && model) {
-    const panel = document.getElementById('panel');
-    const panelRatio = panel ? Math.min(0.30, panel.clientHeight / Math.max(1, h)) : 0;
-    fitTarget.y = -sizeYForFit(model) * (0.08 + panelRatio * 0.05);
-  } else if (model) {
-    fitTarget.y = -sizeYForFit(model) * 0.12;
-  }
+function updateResponsiveFit() {
+  if (!model || !controls) return;
 
-  camera.position.copy(fitTarget).addScaledVector(fitDirection, dist);
-  controls.target.copy(fitTarget);
+  const currentDistance = camera.position.distanceTo(controls.target);
+  const previousFit = Math.max(0.001, lastFitDistance);
+  const zoomRatio = Math.min(2.5, Math.max(0.75, currentDistance / previousFit));
+
+  const fitDistance = calculateDynamicFitDistance();
+  lastFitDistance = fitDistance;
+
+  // Keep the user's zoom level when resizing. If they were at 1.15x fit,
+  // resizing the page keeps them at 1.15x the newly calculated fit distance.
+  const newDistance = fitDistance * zoomRatio;
+  const direction = camera.position.clone().sub(controls.target);
+  if (direction.lengthSq() < 1e-8) direction.copy(fitDirection);
+  direction.normalize();
+
+  camera.position.copy(controls.target).addScaledVector(direction, newDistance);
   controls.update();
 }
 
