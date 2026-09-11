@@ -612,6 +612,24 @@ function loadModel() {
             mat.needsUpdate = true;
           }
 
+          // The corner LED emitter sits extremely close to the surrounding
+          // casing/light-edge geometry. On small mobile viewports the reduced
+          // depth-buffer precision makes those adjacent surfaces prone to
+          // z-fighting/flicker. Keep the emitter depth-tested for proper
+          // occlusion, but bias it slightly toward the camera and prevent it
+          // from writing depth so the adjacent casing cannot fight with it.
+          if (materialName === 'light_casing_corner' || objectName === 'casing_corner_light_emit') {
+            obj.renderOrder = 20;
+            obj.castShadow = false;
+            obj.receiveShadow = false;
+            mat.depthTest = true;
+            mat.depthWrite = false;
+            mat.polygonOffset = true;
+            mat.polygonOffsetFactor = -2;
+            mat.polygonOffsetUnits = -2;
+            mat.needsUpdate = true;
+          }
+
           if (isCasingTarget(objectName, materialName)) {
             casingMaterials.push(mat);
             casingEntries.push({ material: mat, isCorner: false });
@@ -629,7 +647,7 @@ function loadModel() {
       // Exact material indices in the exported Westwood GLB:
       // 0 = shell_silver_marble
       // 9 = casing_wood_ash_light_grey
-      console.log('A5 Westwood material targets / v44');
+      console.log('A5 Westwood material targets / v45');
       console.log('Casing materials:', casingMaterials.map(m => m.name));
       console.log('Shell materials:', shellMaterials.map(m => m.name));
 
