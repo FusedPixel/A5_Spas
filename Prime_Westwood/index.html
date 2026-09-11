@@ -251,7 +251,7 @@ const ASSET_ROOT =
 
 // Bump this value whenever a model or material file is replaced on GitHub.
 // This forces browsers/CDNs to fetch the updated asset instead of serving an older cached copy.
-const ASSET_VERSION = 'v28';
+const ASSET_VERSION = 'v29';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -666,11 +666,11 @@ function loadModel() {
           // PBR response so the shell reads closer to the V-Ray reference.
           if (materialName === 'shell_silver_marble') {
             if ('metalness' in mat) mat.metalness = 0.0;
-            if ('roughness' in mat) mat.roughness = 0.20;
-            if ('envMapIntensity' in mat) mat.envMapIntensity = 1.70;
-            mat.color.setRGB(1.08, 1.08, 1.08);
-            if ('clearcoat' in mat) mat.clearcoat = 0.12;
-            if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.14;
+            if ('roughness' in mat) mat.roughness = 0.22;
+            if ('envMapIntensity' in mat) mat.envMapIntensity = 1.45;
+            mat.color.setRGB(1.0, 1.0, 1.0);
+            if ('clearcoat' in mat) mat.clearcoat = 0.10;
+            if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.18;
             mat.needsUpdate = true;
           }
 
@@ -691,7 +691,7 @@ function loadModel() {
       // Exact material indices in the exported Westwood GLB:
       // 0 = shell_silver_marble
       // 9 = casing_wood_ash_light_grey
-      console.log('A5 Westwood material targets / v23');
+      console.log('A5 Westwood material targets / v29');
       console.log('Casing materials:', casingMaterials.map(m => m.name));
       console.log('Shell materials:', shellMaterials.map(m => m.name));
 
@@ -784,14 +784,22 @@ async function applyFinish(type, key) {
     } else {
       const baseColor = await loadTexture(finish.basecolor, true);
 
+      const shellProfile = {
+        silver_marble: { roughness: 0.22, env: 1.45, clearcoat: 0.10, clearcoatRoughness: 0.18 },
+        midnight_opal: { roughness: 0.24, env: 1.25, clearcoat: 0.10, clearcoatRoughness: 0.20 },
+        expresso: { roughness: 0.28, env: 1.10, clearcoat: 0.08, clearcoatRoughness: 0.22 },
+        ocean_wave: { roughness: 0.24, env: 1.30, clearcoat: 0.10, clearcoatRoughness: 0.20 }
+      };
+      const profile = shellProfile[key] || shellProfile.silver_marble;
+
       shellMaterials.forEach(mat => {
         mat.map = baseColor;
-        mat.color.setRGB(1.08, 1.08, 1.08);
+        mat.color.setRGB(1.0, 1.0, 1.0);
         if ('metalness' in mat) mat.metalness = 0.0;
-        if ('roughness' in mat) mat.roughness = 0.20;
-        if ('envMapIntensity' in mat) mat.envMapIntensity = 1.70;
-        if ('clearcoat' in mat) mat.clearcoat = 0.12;
-        if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.14;
+        if ('roughness' in mat) mat.roughness = profile.roughness;
+        if ('envMapIntensity' in mat) mat.envMapIntensity = profile.env;
+        if ('clearcoat' in mat) mat.clearcoat = profile.clearcoat;
+        if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = profile.clearcoatRoughness;
         mat.needsUpdate = true;
       });
 
