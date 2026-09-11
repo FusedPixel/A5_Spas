@@ -100,12 +100,12 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     left:0;right:0;bottom:0;
     width:100%;
     max-height:25vh;
-    padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:14px;
+    gap:7px;
     overflow-x:hidden;
     overflow-y:auto;
   }
@@ -115,49 +115,51 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex:0 0 auto;
     flex-direction:column;
     align-items:center;
-    gap:8px;
+    gap:4px;
   }
-  .section-title{font-size:10px}
+  .section-title{font-size:9px}
   .swatches{
     width:auto;
     max-width:100%;
     display:flex;
     flex-wrap:nowrap;
-    justify-content:flex-start;
-    gap:9px;
+    justify-content:center;
+    gap:5px;
     overflow-x:auto;
     overflow-y:hidden;
-    padding:2px 2px 4px;
+    padding:1px 1px 2px;
     scrollbar-width:none;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:54px;
+    min-width:44px;
   }
-  .swatch{width:44px;height:44px}
-  .label{font-size:8px;max-width:64px}
+  .swatch{width:36px;height:36px}
+  .swatch:after{inset:-3px}
+  .label{margin-top:4px;font-size:7px;max-width:52px}
   .lighting-row{
     width:auto;
     max-width:100%;
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     align-items:center;
-    gap:12px;
+    justify-content:center;
+    gap:10px;
   }
   .lighting-controls{
     width:auto;
-    max-width:100%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+    max-width:none;
+    display:flex;
+    gap:5px;
   }
-  .light-btn{width:100%;min-width:0;height:36px}
-  .intensity-row{width:100%}
-  .intensity-slider{height:5px}
-  .actions{width:100%;justify-content:flex-end}
-  .action{padding:11px 15px}
-  #status{width:100%;max-width:none;text-align:left}
+  .light-btn{width:auto;min-width:74px;height:30px;padding:0 8px;font-size:8px}
+  .intensity-row{width:145px}
+  .intensity-head{margin-bottom:4px;font-size:7px}
+  .intensity-slider{height:4px}
+  .actions{width:auto;justify-content:center}
+  .action{padding:8px 12px;font-size:9px}
+  #status{width:auto;max-width:120px;text-align:center;font-size:8px}
 }
 
 </style>
@@ -258,7 +260,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v33';
+const ASSET_VERSION = 'v40';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -829,20 +831,32 @@ function updateResponsiveFit() {
 
   // As the available page gets smaller/narrower, increase camera distance
   // so the spa remains fully framed instead of being cropped or feeling oversized.
-  const heightFactor = fitReferenceHeight / h;
+  const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
+
+  let heightFactor = fitReferenceHeight / h;
   const widthFactor = Math.sqrt(fitReferenceAspect / Math.max(0.1, aspect));
-  const factor = Math.max(0.72, heightFactor, widthFactor);
+
+  // Portrait mode leaves less vertical room because the options bar overlays
+  // the bottom of the viewer. Fit against the unobstructed height and add a
+  // small safety margin so the entire spa stays visible on first load.
+  if (portrait) {
+    const panel = document.getElementById('panel');
+    const panelHeight = panel ? panel.clientHeight : 0;
+    const visibleHeight = Math.max(1, h - panelHeight);
+    heightFactor = fitReferenceHeight / visibleHeight;
+  }
+
+  const portraitSafety = portrait ? 1.10 : 1.0;
+  const factor = Math.max(0.72, heightFactor, widthFactor) * portraitSafety;
 
   const dist = fitReferenceDistance * factor;
 
-  // In narrow portrait mode the options bar overlays the bottom of the viewer.
-  // Shift the camera target slightly upward so the spa remains visually centred
-  // in the unobstructed portion of the page. Desktop/landscape is unchanged.
-  const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
+  // In narrow portrait mode, keep the spa centred in the unobstructed
+  // viewer area above the options bar. Desktop/landscape is unchanged.
   if (portrait && model) {
     const panel = document.getElementById('panel');
-    const panelRatio = panel ? Math.min(0.45, panel.clientHeight / Math.max(1, h)) : 0;
-    fitTarget.y = -sizeYForFit(model) * (0.12 + panelRatio * 0.10);
+    const panelRatio = panel ? Math.min(0.30, panel.clientHeight / Math.max(1, h)) : 0;
+    fitTarget.y = -sizeYForFit(model) * (0.08 + panelRatio * 0.05);
   } else if (model) {
     fitTarget.y = -sizeYForFit(model) * 0.12;
   }
