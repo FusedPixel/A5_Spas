@@ -629,7 +629,7 @@ function loadModel() {
       // Exact material indices in the exported Westwood GLB:
       // 0 = shell_silver_marble
       // 9 = casing_wood_ash_light_grey
-      console.log('A5 Westwood material targets / v42');
+      console.log('A5 Westwood material targets / v44');
       console.log('Casing materials:', casingMaterials.map(m => m.name));
       console.log('Shell materials:', shellMaterials.map(m => m.name));
 
@@ -837,9 +837,10 @@ function portraitFitTargetYOffset(modelHeight) {
   const stage = document.getElementById('stage');
   const stageRect = stage.getBoundingClientRect();
   const visibleFraction = panel ? Math.max(0.58, Math.min(0.9, (panel.getBoundingClientRect().top - stageRect.top) / Math.max(1, stageRect.height))) : 0.75;
-  // Shift the camera target down as the options area grows so the spa stays
-  // centred in the usable viewer region above the options.
-  return -modelHeight * (0.08 + (1 - visibleFraction) * 0.65);
+  // Shift the camera target further down in portrait mode so the spa itself
+  // sits higher and is visually centred in the usable viewer area above the options.
+  // The extra offset is only applied to narrow portrait layouts.
+  return -modelHeight * (0.18 + (1 - visibleFraction) * 0.85);
 }
 
 function calculateDynamicFitDistance() {
