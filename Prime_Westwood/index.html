@@ -249,54 +249,60 @@ import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniform
 const ASSET_ROOT =
   'https://raw.githubusercontent.com/FusedPixel/A5_Spas/main/';
 
-const MODEL_URL =
-  ASSET_ROOT + 'Prime_Westwood/Prime_Westwood_Spa_Export_gltf.glb';
+// Bump this value whenever a model or material file is replaced on GitHub.
+// This forces browsers/CDNs to fetch the updated asset instead of serving an older cached copy.
+const ASSET_VERSION = 'v28';
+const versioned = url => `${url}?v=${ASSET_VERSION}`;
+
+const MODEL_URL = versioned(
+  ASSET_ROOT + 'Prime_Westwood/Prime_Westwood_Spa_Export_gltf.glb'
+);
 
 const MATERIAL_ROOT = ASSET_ROOT + 'Materials/';
 
 const CASING_FINISHES = {
   'ash-light-grey': {
     name: 'Ash (Light Grey)',
-    basecolor: MATERIAL_ROOT + 'casing/casing_ash_light_grey_basecolor.jpg',
-    normal: MATERIAL_ROOT + 'casing/casing_ash_light_grey_normal.jpg',
-    roughness: MATERIAL_ROOT + 'casing/casing_ash_light_grey_roughness.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'casing/casing_ash_light_grey_basecolor.jpg'),
+    normal: versioned(MATERIAL_ROOT + 'casing/casing_ash_light_grey_normal.jpg'),
+    roughness: versioned(MATERIAL_ROOT + 'casing/casing_ash_light_grey_roughness.jpg')
   },
   charcoal: {
     name: 'Charcoal',
-    basecolor: MATERIAL_ROOT + 'casing/casing_charcoal_basecolor.jpg',
-    normal: MATERIAL_ROOT + 'casing/casing_charcoal_normal.jpg',
-    roughness: MATERIAL_ROOT + 'casing/casing_charcoal_roughness.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'casing/casing_charcoal_basecolor.jpg'),
+    normal: versioned(MATERIAL_ROOT + 'casing/casing_charcoal_normal.jpg'),
+    roughness: versioned(MATERIAL_ROOT + 'casing/casing_charcoal_roughness.jpg')
   },
   black: {
     name: 'Black',
-    basecolor: MATERIAL_ROOT + 'casing/casing_black_basecolor.jpg',
-    normal: MATERIAL_ROOT + 'casing/casing_black_normal.jpg',
-    roughness: MATERIAL_ROOT + 'casing/casing_black_roughness.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'casing/casing_black_basecolor.jpg'),
+    normal: versioned(MATERIAL_ROOT + 'casing/casing_black_normal.jpg'),
+    roughness: versioned(MATERIAL_ROOT + 'casing/casing_black_roughness.jpg')
   },
   'dark-grey': {
     name: 'Dark Grey',
-    basecolor: MATERIAL_ROOT + 'casing/casing_dark_grey_basecolor.jpg',
-    normal: MATERIAL_ROOT + 'casing/casing_dark_grey_normal.jpg',
-    roughness: MATERIAL_ROOT + 'casing/casing_dark_grey_roughness.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'casing/casing_dark_grey_basecolor.jpg'),
+    normal: versioned(MATERIAL_ROOT + 'casing/casing_dark_grey_normal.jpg'),
+    roughness: versioned(MATERIAL_ROOT + 'casing/casing_dark_grey_roughness.jpg')
   }
 };
 
 const SHELL_FINISHES = {
   'silver-marble': {
     name: 'Silver Marble',
-    basecolor: MATERIAL_ROOT + 'shell/shell_silver_marble_basecolor.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'shell/shell_silver_marble_basecolor.jpg')
   },
   'midnight-opal': {
     name: 'Midnight Opal',
-    basecolor: MATERIAL_ROOT + 'shell/shell_midnight_opal_basecolor.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'shell/shell_midnight_opal_basecolor.jpg')
   },
   espresso: {
     name: 'Espresso',
-    basecolor: MATERIAL_ROOT + 'shell/shell_expresso_basecolor.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'shell/shell_expresso_basecolor.jpg')
   },
   'ocean-wave': {
     name: 'Ocean Wave',
-    basecolor: MATERIAL_ROOT + 'shell/shell_ocean_wave_basecolor.jpg'
+    basecolor: versioned(MATERIAL_ROOT + 'shell/shell_ocean_wave_basecolor.jpg')
   }
 };
 
