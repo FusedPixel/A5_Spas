@@ -15,7 +15,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;color:
 .product-name{position:absolute;top:63px;left:16px;z-index:5;font-size:17px;font-weight:600;color:#202020}
 #hint{position:absolute;left:50%;bottom:25px;transform:translateX(-50%);font-size:10px;letter-spacing:1px;color:#888;z-index:5;pointer-events:none}
 #help{position:absolute;right:18px;top:18px;width:44px;height:44px;border:0;background:#292929;color:#fff;font-size:23px;z-index:6;cursor:pointer}
-#controls{position:fixed;left:18px;bottom:18px;display:flex;gap:8px;z-index:60;pointer-events:auto}
+#controls{position:fixed;left:18px;bottom:125px;display:flex;gap:8px;z-index:60;pointer-events:auto}
 .ctrl{width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;color:#222;cursor:pointer;font-size:16px}
 #loading{position:absolute;inset:0;background:#fff;z-index:20;display:flex;align-items:center;justify-content:center}
 .loadbox{width:260px;text-align:center}
@@ -26,17 +26,17 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;color:
 .loaderror{font-size:12px;line-height:1.5;color:#333}
 .loaderror strong{display:block;margin-bottom:7px;font-size:14px}
 
-aside{--panel-width:390px;position:fixed;right:0;top:0;bottom:0;width:var(--panel-width);z-index:30;border-left:1px solid #e5e5e5;background:#fff;padding:52px 30px 35px;overflow:auto;box-shadow:-10px 0 30px rgba(0,0,0,.08);transform:translateX(0);transition:transform .28s ease}
-.side-intro{margin:0 0 42px;text-align:center;color:#444;font-size:15px;line-height:1.42}
-.section-title{margin:0 0 20px;font-size:15px;font-weight:700;letter-spacing:.1px}
-.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 16px;margin:0 0 38px;align-items:start}
+aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.97);border-top:1px solid #e5e5e5;padding:14px 22px 16px;box-shadow:0 -10px 28px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;gap:34px;overflow-x:auto;overflow-y:hidden;backdrop-filter:blur(10px)}
+.option-group{display:flex;align-items:center;gap:18px;flex:0 0 auto;min-width:0}
+.section-title{margin:0;font-size:11px;font-weight:700;letter-spacing:.55px;white-space:nowrap}
+.swatches{display:grid;grid-template-columns:repeat(4,64px);gap:12px;margin:0;align-items:start}
 .swatch-wrap{width:auto;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
-.swatch{width:72px;height:72px;border-radius:50%;border:1px solid #a8a8a8;padding:0;background:#ddd;cursor:pointer;position:relative;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.swatch{width:50px;height:50px;border-radius:50%;border:1px solid #a8a8a8;padding:0;background:#ddd;cursor:pointer;position:relative;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .swatch:after{content:"";position:absolute;inset:-4px;border:1.5px solid transparent;border-radius:50%;transition:border-color .18s ease}
 .swatch:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.10)}
 .swatch.selected:after{border-color:#202020}
 .swatch-inner{width:100%;height:100%;display:block;border-radius:50%}
-.label{margin-top:10px;font-size:11px;line-height:1.12;max-width:82px;color:#222}
+.label{margin-top:7px;font-size:9px;line-height:1.12;max-width:74px;color:#222;white-space:nowrap}
 .cab-sandalwood .swatch-inner{background:radial-gradient(circle at 32% 25%,#a97945,#765332 58%,#4a372a)}
 .cab-ashwood .swatch-inner{background:linear-gradient(135deg,#7a7a7a,#a7a7a7 42%,#5f5f5f)}
 .cab-chestnut .swatch-inner{background:radial-gradient(circle at 35% 28%,#5c4742,#2c2525 60%,#1b1818)}
@@ -45,12 +45,10 @@ aside{--panel-width:390px;position:fixed;right:0;top:0;bottom:0;width:var(--pane
 .shell-moonstone .swatch-inner{background:repeating-linear-gradient(135deg,#fafafa 0 7px,#d5d5d5 8px,#f5f5f5 12px)}
 .shell-desert .swatch-inner{background:linear-gradient(135deg,#d2cbc1,#a59b8d 48%,#e5ded4)}
 .shell-smoked .swatch-inner{background:radial-gradient(circle at 28% 26%,#777,#242424 52%,#050505)}
-.actions{display:flex;gap:14px}
-.action{flex:1;border:0;background:#292929;color:#fff;padding:15px 12px;font-size:11px;font-weight:700;letter-spacing:.15px;cursor:pointer;transition:background .18s ease,transform .18s ease}.action:hover{background:#1f1f1f;transform:translateY(-1px)}
-#status{margin-top:14px;text-align:center;font-size:10px;line-height:1.45;color:#777;min-height:32px}
+.actions{display:flex;gap:10px;flex:0 0 auto}
+.action{border:0;background:#292929;color:#fff;padding:12px 16px;font-size:10px;font-weight:700;letter-spacing:.15px;cursor:pointer;transition:background .18s ease,transform .18s ease;white-space:nowrap}.action:hover{background:#1f1f1f;transform:translateY(-1px)}
+#status{margin:0;text-align:center;font-size:9px;line-height:1.35;color:#777;min-width:86px;max-width:120px}
 #materialInfo{margin-top:8px;font-size:9px;line-height:1.45;color:#999;text-align:center}
-
-
 .shell-silver .swatch-inner{background:linear-gradient(145deg,#f4f5f3 0%,#cfd2cf 38%,#eef0ed 67%,#b9beb9 100%)}
 .shell-midnight .swatch-inner{background:linear-gradient(145deg,#27303a 0%,#10151c 38%,#34414d 63%,#0a0e13 100%)}
 .shell-espresso .swatch-inner{background:linear-gradient(145deg,#63483c 0%,#33251f 40%,#6e4b3b 69%,#211817 100%)}
@@ -59,70 +57,105 @@ aside{--panel-width:390px;position:fixed;right:0;top:0;bottom:0;width:var(--pane
 .cab-charcoal .swatch-inner{background:repeating-linear-gradient(0deg,#555 0 13px,#686868 14px 17px,#4b4b4b 18px 19px)}
 .cab-black .swatch-inner{background:repeating-linear-gradient(0deg,#202020 0 13px,#373737 14px 17px,#171717 18px 19px)}
 .cab-darkgrey .swatch-inner{background:repeating-linear-gradient(0deg,#757575 0 13px,#878787 14px 17px,#686868 18px 19px)}
-
-
-.lighting-title{margin-top:2px}
-.lighting-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 28px}
-.light-btn{height:38px;border:1px solid #d7d7d7;background:#fff;color:#2a2a2a;font-size:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .18s ease}
-.light-btn:hover{border-color:#222;background:#fafafa}
-.light-btn.selected{background:#292929;color:#fff;border-color:#292929}
-.intensity-row{margin:-10px 0 28px}
-.intensity-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:9px;font-weight:700;letter-spacing:.55px;color:#555}
-#intensityValue{color:#222}
-.intensity-slider{width:100%;height:4px;margin:0;accent-color:#292929;cursor:pointer}
-
-.advanced-lighting{border-top:1px solid #e5e5e5;margin-top:4px;padding-top:16px;margin-bottom:26px}
-.advanced-lighting summary{cursor:pointer;list-style:none;font-size:10px;font-weight:700;letter-spacing:.7px;color:#333}
-.advanced-lighting summary::-webkit-details-marker{display:none}
-.advanced-lighting summary:after{content:'+';float:right;font-size:14px;line-height:10px;color:#888}
-.advanced-lighting[open] summary:after{content:'–'}
-.advanced-note{margin:10px 0 18px;font-size:9px;line-height:1.45;color:#888}
-.light-block{padding:14px 0 16px;border-top:1px solid #efefef}
-.light-block-title{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;letter-spacing:.45px;color:#555;margin-bottom:8px}
-.light-block-title span:last-child{color:#222;font-variant-numeric:tabular-nums}
-.detail-slider{width:100%;height:3px;margin:0;accent-color:#292929;cursor:pointer}
-.axis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px}
-.axis-grid label{display:flex;align-items:center;gap:5px;font-size:8px;font-weight:700;color:#888}
-.axis-grid .detail-slider{flex:1;min-width:0}
-.reset-lighting{width:100%;height:32px;border:1px solid #d8d8d8;background:#fff;color:#333;font-size:9px;font-weight:700;letter-spacing:.6px;cursor:pointer;margin-top:2px}
-.reset-lighting:hover{border-color:#222}
-
-/* Professional drawer toggle */
-.drawer-toggle{position:fixed;right:390px;top:50%;transform:translateY(-50%);z-index:35;width:30px;height:72px;border:1px solid #d9d9d9;border-right:0;border-radius:8px 0 0 8px;background:rgba(255,255,255,.96);color:#222;box-shadow:-4px 0 16px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:right .28s ease,background .18s ease;font-size:20px;line-height:1;font-family:Arial,sans-serif}
-.drawer-toggle:hover{background:#fff}
-.drawer-toggle .chev{display:block;transform:translateY(-1px)}
-.panel-backdrop{display:none}
-body.panel-closed aside{transform:translateX(105%);box-shadow:none}
-body.panel-closed .drawer-toggle{right:0}
+.lighting-row{display:flex;align-items:center;gap:18px}.lighting-controls{display:flex;gap:7px;margin:0}.light-btn{height:34px;min-width:92px;border:1px solid #d7d7d7;background:#fff;color:#2a2a2a;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .18s ease}.light-btn:hover{border-color:#222;background:#fafafa}.light-btn.selected{background:#292929;color:#fff;border-color:#292929}
+.intensity-row{width:220px;margin:0}.intensity-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:8px;font-weight:700;letter-spacing:.55px;color:#555}.intensity-slider{width:100%;height:4px;margin:0;accent-color:#292929;cursor:pointer}
 
 @media(max-width:1100px){
-  :root{--mobile-panel-width:min(420px,92vw)}
   #stage{height:100vh;width:100vw}
   .brand{top:12px;left:13px;font-size:13px;letter-spacing:4px}
   .subbrand{top:31px;left:13px;font-size:7px}
   .product-name{top:52px;left:13px;font-size:15px}
-  #hint{bottom:72px;font-size:9px;text-align:center;white-space:nowrap}
-  #controls{left:13px;bottom:68px}
-  .ctrl{width:38px;height:38px}
-  aside{--panel-width:var(--mobile-panel-width);padding:50px 18px 24px;max-height:none}
-  .drawer-toggle{right:var(--mobile-panel-width);width:34px;height:68px;border-radius:8px 0 0 8px}
-  .section-title{font-size:13px;margin-bottom:14px}
-  .swatches{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 14px;margin-bottom:26px}
-  .swatch{width:64px;height:64px}
-  .label{font-size:10px;margin-top:8px}
-  .lighting-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:18px}
-  .light-btn{height:42px}
-  .intensity-row{margin-bottom:20px}
+  #hint{bottom:175px;font-size:9px;text-align:center;white-space:nowrap}
+  #controls{left:13px;bottom:140px}
+  .option-group{gap:12px}
+  aside{justify-content:flex-start;padding:12px 14px 14px;gap:22px}
+  .swatches{grid-template-columns:repeat(4,58px);gap:9px}
+  .swatch{width:46px;height:46px}
+  .label{font-size:8px;max-width:68px}
+  .section-title{font-size:10px}
+  .lighting-row{gap:12px}
+  .lighting-controls{gap:6px}
+  .light-btn{height:32px;min-width:82px;font-size:8px}
+  .intensity-row{width:190px}
 }
 
-@media(max-width:600px){
-  aside{padding-left:16px;padding-right:16px}
-  .advanced-lighting{margin-top:4px}
+@media(max-width:700px){
+  #hint{display:none}
+  #controls{left:12px;bottom:125px}
+  .ctrl{width:36px;height:36px}
+  aside{padding:10px 12px 12px;gap:18px}
+  .option-group{flex-direction:column;align-items:flex-start;gap:8px}
+  .swatches{grid-template-columns:repeat(4,52px);gap:6px}
+  .swatch{width:42px;height:42px}
+  .lighting-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .intensity-row{width:170px}
 }
 
-@media(min-width:1101px){
-  body.panel-open .drawer-toggle{right:390px}
+/* Narrow portrait layout for mobile/tablet pages. Desktop/fullscreen remains unchanged. */
+@media (max-width: 900px) and (orientation: portrait){
+  #app,#stage{min-height:100vh;height:100vh;width:100vw}
+  #controls{left:12px;bottom:auto;top:78px;gap:7px}
+  .ctrl{width:36px;height:36px}
+  aside{
+    left:0;right:0;bottom:0;
+    width:100%;
+    max-height:48vh;
+    padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:14px;
+    overflow-x:hidden;
+    overflow-y:auto;
+  }
+  .option-group{
+    width:100%;
+    flex:0 0 auto;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .section-title{font-size:10px}
+  .swatches{
+    width:100%;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:flex-start;
+    gap:12px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:2px 2px 4px;
+    scrollbar-width:none;
+  }
+  .swatches::-webkit-scrollbar{display:none}
+  .swatch-wrap{
+    flex:0 0 auto;
+    min-width:64px;
+  }
+  .swatch{width:50px;height:50px}
+  .label{font-size:8px;max-width:78px}
+  .lighting-row{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:12px;
+  }
+  .lighting-controls{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .light-btn{width:100%;min-width:0;height:36px}
+  .intensity-row{width:100%}
+  .intensity-slider{height:5px}
+  .actions{width:100%;justify-content:flex-end}
+  .action{padding:11px 15px}
+  #status{width:100%;max-width:none;text-align:left}
 }
+
 </style>
 </head>
 <body>
@@ -131,9 +164,8 @@ body.panel-closed .drawer-toggle{right:0}
     <canvas id="webgl"></canvas>
     <div class="brand">A5 SPAS</div>
     <div class="subbrand">3D PRODUCT EXPERIENCE</div>
-    <div class="product-name">Westwood</div>
+    <div class="product-name" id="productName"></div>
     <div id="hint">DRAG TO ROTATE • SCROLL TO ZOOM</div>
-    <button id="drawerToggle" class="drawer-toggle" type="button" aria-label="Hide options panel" aria-expanded="true"><span class="chev">›</span></button>
     <div id="controls">
       <button class="ctrl" id="reset" title="Reset view" aria-label="Reset view">↻</button>
       <button class="ctrl" id="play" title="Pause rotation" aria-label="Pause rotation">❚❚</button>
@@ -142,7 +174,7 @@ body.panel-closed .drawer-toggle{right:0}
 
     <div id="loading">
       <div class="loadbox">
-        <div class="loadtitle" id="loadTitle">LOADING A5 SPA</div>
+        <div class="loadtitle" id="loadTitle"></div>
         <div class="bar"><span id="loadBar"></span></div>
         <div class="loadpct" id="loadPct">0%</div>
       </div>
@@ -150,84 +182,45 @@ body.panel-closed .drawer-toggle{right:0}
   </main>
 
   <aside id="panel">
-        <h3 class="section-title">SHELL OPTIONS</h3>
-    <div class="swatches">
-      <div class="swatch-wrap shell-silver"><button class="swatch selected" data-type="shell" data-value="silver-marble" aria-label="Silver Marble"><span class="swatch-inner"></span></button><div class="label">Silver Marble</div></div>
-      <div class="swatch-wrap shell-midnight"><button class="swatch" data-type="shell" data-value="midnight-opal" aria-label="Midnight Opal"><span class="swatch-inner"></span></button><div class="label">Midnight Opal</div></div>
-      <div class="swatch-wrap shell-espresso"><button class="swatch" data-type="shell" data-value="espresso" aria-label="Espresso"><span class="swatch-inner"></span></button><div class="label">Espresso</div></div>
-      <div class="swatch-wrap shell-ocean"><button class="swatch" data-type="shell" data-value="ocean-wave" aria-label="Ocean Wave"><span class="swatch-inner"></span></button><div class="label">Ocean Wave</div></div>
-    </div>
-
-    <h3 class="section-title">CABINET OPTIONS</h3>
-    <div class="swatches">
-      <div class="swatch-wrap cab-lightgrey"><button class="swatch" data-type="cabinet" data-value="ash-light-grey" aria-label="Ash (Light Grey)"><span class="swatch-inner"></span></button><div class="label">Ash (Light Grey)</div></div>
-      <div class="swatch-wrap cab-charcoal"><button class="swatch" data-type="cabinet" data-value="charcoal" aria-label="Charcoal"><span class="swatch-inner"></span></button><div class="label">Charcoal</div></div>
-      <div class="swatch-wrap cab-black"><button class="swatch" data-type="cabinet" data-value="black" aria-label="Black"><span class="swatch-inner"></span></button><div class="label">Black</div></div>
-      <div class="swatch-wrap cab-darkgrey"><button class="swatch" data-type="cabinet" data-value="dark-grey" aria-label="Dark Grey"><span class="swatch-inner"></span></button><div class="label">Dark Grey</div></div>
-    </div>
-
-
-    <h3 class="section-title lighting-title">LIGHTING SETUP</h3>
-    <div class="lighting-controls">
-      <button class="light-btn selected" data-light="setup1">STUDIO 01</button>
-      <button class="light-btn" data-light="setup2">STUDIO 02</button>
-    </div>
-
-    <div class="intensity-row">
-      <div class="intensity-head">
-        <span>MASTER LIGHT INTENSITY</span>
-        <span id="intensityValue">100%</span>
+    <div class="option-group shell-group">
+      <h3 class="section-title">SHELL OPTIONS</h3>
+      <div class="swatches">
+        <div class="swatch-wrap shell-silver"><button class="swatch" data-type="shell" data-value="silver-marble" aria-label="Silver Marble"><span class="swatch-inner"></span></button><div class="label">Silver Marble</div></div>
+        <div class="swatch-wrap shell-midnight"><button class="swatch" data-type="shell" data-value="midnight-opal" aria-label="Midnight Opal"><span class="swatch-inner"></span></button><div class="label">Midnight Opal</div></div>
+        <div class="swatch-wrap shell-espresso"><button class="swatch" data-type="shell" data-value="espresso" aria-label="Espresso"><span class="swatch-inner"></span></button><div class="label">Espresso</div></div>
+        <div class="swatch-wrap shell-ocean"><button class="swatch" data-type="shell" data-value="ocean-wave" aria-label="Ocean Wave"><span class="swatch-inner"></span></button><div class="label">Ocean Wave</div></div>
       </div>
-      <input id="lightIntensity" class="intensity-slider" type="range" min="100" max="200" value="200" step="1" aria-label="Master light intensity">
     </div>
 
-    <details class="advanced-lighting">
-      <summary>ADVANCED LIGHTING</summary>
-      <div class="advanced-note">Adjust the broad studio key, fill and rim lights to match your V-Ray reference. These lights do not cast hard shadows.</div>
+    <div class="option-group cabinet-group">
+      <h3 class="section-title">CABINET OPTIONS</h3>
+      <div class="swatches">
+        <div class="swatch-wrap cab-lightgrey"><button class="swatch" data-type="cabinet" data-value="ash-light-grey" aria-label="Ash (Light Grey)"><span class="swatch-inner"></span></button><div class="label">Ash (Light Grey)</div></div>
+        <div class="swatch-wrap cab-charcoal"><button class="swatch" data-type="cabinet" data-value="charcoal" aria-label="Charcoal"><span class="swatch-inner"></span></button><div class="label">Charcoal</div></div>
+        <div class="swatch-wrap cab-black"><button class="swatch" data-type="cabinet" data-value="black" aria-label="Black"><span class="swatch-inner"></span></button><div class="label">Black</div></div>
+        <div class="swatch-wrap cab-darkgrey"><button class="swatch" data-type="cabinet" data-value="dark-grey" aria-label="Dark Grey"><span class="swatch-inner"></span></button><div class="label">Dark Grey</div></div>
+      </div>
+    </div>
 
-      <div class="light-block">
-        <div class="light-block-title"><span>KEY LIGHT</span><span id="keyValue">2.20</span></div>
-        <input id="keyIntensity" class="detail-slider" type="range" min="0" max="4" value="1.65" step="0.01">
-        <div class="axis-grid">
-          <label>X <input id="keyX" class="detail-slider" type="range" min="-10" max="10" value="5" step="0.1"></label>
-          <label>Y <input id="keyY" class="detail-slider" type="range" min="0" max="14" value="8" step="0.1"></label>
-          <label>Z <input id="keyZ" class="detail-slider" type="range" min="-10" max="10" value="4" step="0.1"></label>
+    <div class="option-group lighting-group">
+      <h3 class="section-title lighting-title">LIGHTING SETUP</h3>
+      <div class="lighting-row">
+        <div class="lighting-controls">
+          <button class="light-btn selected" data-light="setup1">STUDIO 01</button>
+          <button class="light-btn" data-light="setup2">STUDIO 02</button>
+        </div>
+        <div class="intensity-row">
+          <div class="intensity-head"><span>MASTER LIGHT INTENSITY</span><span id="intensityValue">50%</span></div>
+          <input id="lightIntensity" class="intensity-slider" type="range" min="0" max="100" value="50" step="1" aria-label="Master light intensity">
         </div>
       </div>
-
-      <div class="light-block">
-        <div class="light-block-title"><span>FILL LIGHT</span><span id="fillValue">0.10</span></div>
-        <input id="fillIntensity" class="detail-slider" type="range" min="0" max="2" value="0.34" step="0.01">
-        <div class="axis-grid">
-          <label>X <input id="fillX" class="detail-slider" type="range" min="-10" max="10" value="-4" step="0.1"></label>
-          <label>Y <input id="fillY" class="detail-slider" type="range" min="0" max="14" value="4" step="0.1"></label>
-          <label>Z <input id="fillZ" class="detail-slider" type="range" min="-10" max="10" value="6" step="0.1"></label>
-        </div>
-      </div>
-
-      <div class="light-block">
-        <div class="light-block-title"><span>RIM / BACK LIGHT</span><span id="rimValue">0.70</span></div>
-        <input id="rimIntensity" class="detail-slider" type="range" min="0" max="3" value="0.42" step="0.01">
-        <div class="axis-grid">
-          <label>X <input id="rimX" class="detail-slider" type="range" min="-10" max="10" value="-3" step="0.1"></label>
-          <label>Y <input id="rimY" class="detail-slider" type="range" min="0" max="14" value="6" step="0.1"></label>
-          <label>Z <input id="rimZ" class="detail-slider" type="range" min="-10" max="10" value="-7" step="0.1"></label>
-        </div>
-      </div>
-
-      <div class="light-block">
-        <div class="light-block-title"><span>AMBIENT / SKY</span><span id="hemiValue">0.05</span></div>
-        <input id="hemiIntensity" class="detail-slider" type="range" min="0" max="0.5" value="0.07" step="0.01">
-      </div>
-
-      <button id="resetLighting" class="reset-lighting">RESET LIGHTING</button>
-    </details>
+    </div>
 
     <div class="actions">
       <button class="action" id="copyBtn">COPY LINK</button>
     </div>
-    <div id="status">Loading 3D model…</div>
-</aside>
+    <div id="status">Loading Westwood…</div>
+  </aside>
 </div>
 
 <script type="importmap">
@@ -249,15 +242,26 @@ import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniform
 const ASSET_ROOT =
   'https://raw.githubusercontent.com/FusedPixel/A5_Spas/main/';
 
-// Bump this value whenever a model or material file is replaced on GitHub.
-// This forces browsers/CDNs to fetch the updated asset instead of serving an older cached copy.
-const ASSET_VERSION = 'v29';
+// ================================================================
+// SPA-SPECIFIC SETTINGS
+// For the next spa, these are the main values you need to change.
+// ================================================================
+const SPA_NAME = 'Westwood';
+const SPA_FOLDER = 'Prime_Westwood';
+const MODEL_FILE = 'Prime_Westwood_Spa_Export_gltf.glb';
+const DEFAULT_SHELL = 'silver-marble';
+const DEFAULT_CASING = 'ash-light-grey';
+
+// Bump this whenever the model/material files on GitHub are replaced.
+// This forces browsers/CDNs to fetch the latest assets.
+const ASSET_VERSION = 'v33';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
-  ASSET_ROOT + 'Prime_Westwood/Prime_Westwood_Spa_Export_gltf.glb'
+  `${ASSET_ROOT}${SPA_FOLDER}/${MODEL_FILE}`
 );
 
+const MODEL_NAME = SPA_NAME;
 const MATERIAL_ROOT = ASSET_ROOT + 'Materials/';
 
 const CASING_FINISHES = {
@@ -307,14 +311,25 @@ const SHELL_FINISHES = {
 };
 
 const state = {
-  casing: 'ash-light-grey',
-  shell: 'silver-marble',
+  casing: DEFAULT_CASING,
+  shell: DEFAULT_SHELL,
   autoRotate: true
 };
 
 const canvas = document.getElementById('webgl');
 const loading = document.getElementById('loading');
 const loadBar = document.getElementById('loadBar');
+
+// Populate all product-specific UI from SPA_NAME / defaults above.
+document.getElementById('productName').textContent = SPA_NAME;
+document.getElementById('loadTitle').textContent = `LOADING ${SPA_NAME.toUpperCase()}`;
+document.getElementById('status').textContent = `Loading ${SPA_NAME}…`;
+document.querySelectorAll('.swatch[data-type="shell"]').forEach(btn =>
+  btn.classList.toggle('selected', btn.dataset.value === DEFAULT_SHELL)
+);
+document.querySelectorAll('.swatch[data-type="cabinet"]').forEach(btn =>
+  btn.classList.toggle('selected', btn.dataset.value === DEFAULT_CASING)
+);
 const loadPct = document.getElementById('loadPct');
 const loadTitle = document.getElementById('loadTitle');
 const status = document.getElementById('status');
@@ -333,7 +348,7 @@ let keyLightWidth = 5.0, keyLightHeight = 4.0;
 let fillLightWidth = 4.0, fillLightHeight = 3.0;
 let rimLightWidth = 4.0, rimLightHeight = 3.0;
 let currentLightPreset = 'setup1';
-let lightIntensity = 2.0;
+let lightIntensity = 2.0; // slider midpoint (50) preserves the current lighting level
 let fitReferenceHeight = 0;
 let fitReferenceAspect = 1;
 let fitReferenceDistance = 1;
@@ -342,11 +357,11 @@ let fitTarget = new THREE.Vector3();
 
 const LIGHT_PRESETS = {
   setup1: {
-    key: 5.5, fill: 3.0, rim: 3.2, hemi: 0.060, exposure: 1.08, env: 0.24,
+    key: 5.5, fill: 3.0, rim: 3.2, hemi: 0.500, exposure: 1.08, env: 0.24,
     keyPos: [5.0, 8.5, 4.5], fillPos: [-4.5, 6.0, 5.5], rimPos: [-4.0, 7.5, -7.5]
   },
   setup2: {
-    key: 4.8, fill: 3.2, rim: 3.6, hemi: 0.065, exposure: 1.10, env: 0.28,
+    key: 4.8, fill: 3.2, rim: 3.6, hemi: 0.500, exposure: 1.10, env: 0.28,
     keyPos: [4.5, 9.0, 3.5], fillPos: [-5.0, 6.5, 5.0], rimPos: [-4.5, 8.0, -8.0]
   }
 };
@@ -391,7 +406,6 @@ function applyLightingPreset(name) {
   if (hemiLight) hemiLight.intensity = s.hemi * lightIntensity;
   if (scene && hdrTexture) scene.environmentIntensity = p.env;
 
-  syncAdvancedControls(s);
 
   document.querySelectorAll('.light-btn').forEach(btn => {
     btn.classList.toggle('selected', btn.dataset.light === currentLightPreset);
@@ -399,63 +413,6 @@ function applyLightingPreset(name) {
 
   loadHDRI(currentLightPreset);
   syncHash();
-}
-
-function syncAdvancedControls(s) {
-  const set = (id, value, digits=2) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.value = value;
-    const out = document.getElementById(id.replace('Intensity','Value'));
-    if (out) out.textContent = Number(value).toFixed(digits);
-  };
-  set('keyIntensity', s.key); set('fillIntensity', s.fill); set('rimIntensity', s.rim); set('hemiIntensity', s.hemi);
-  [['keyX',s.keyPos[0]],['keyY',s.keyPos[1]],['keyZ',s.keyPos[2]],['fillX',s.fillPos[0]],['fillY',s.fillPos[1]],['fillZ',s.fillPos[2]],['rimX',s.rimPos[0]],['rimY',s.rimPos[1]],['rimZ',s.rimPos[2]]].forEach(([id,v])=>{ const el=document.getElementById(id); if(el) el.value=v; });
-}
-
-function wireAdvancedLighting() {
-  const get = id => document.getElementById(id);
-  const s = () => lightSettings[currentLightPreset];
-
-  const intensityBindings = [
-    ['keyIntensity','key','keyValue'],
-    ['fillIntensity','fill','fillValue'],
-    ['rimIntensity','rim','rimValue'],
-    ['hemiIntensity','hemi','hemiValue']
-  ];
-  intensityBindings.forEach(([id,key,outId]) => {
-    get(id).addEventListener('input', e => {
-      const v = Number(e.target.value);
-      s()[key] = v;
-      get(outId).textContent = v.toFixed(2);
-      applyCurrentLightTuning();
-    });
-  });
-
-  const positionBindings = [
-    ['keyX','keyPos',0],['keyY','keyPos',1],['keyZ','keyPos',2],
-    ['fillX','fillPos',0],['fillY','fillPos',1],['fillZ','fillPos',2],
-    ['rimX','rimPos',0],['rimY','rimPos',1],['rimZ','rimPos',2]
-  ];
-  positionBindings.forEach(([id,key,idx]) => {
-    get(id).addEventListener('input', e => {
-      s()[key][idx] = Number(e.target.value);
-      applyCurrentLightTuning();
-    });
-  });
-
-  get('resetLighting').addEventListener('click', () => {
-    lightSettings[currentLightPreset] = structuredClone(LIGHT_PRESETS[currentLightPreset]);
-    applyLightingPreset(currentLightPreset);
-  });
-}
-
-function applyCurrentLightTuning() {
-  const s = lightSettings[currentLightPreset];
-  if (keyLight) { keyLight.intensity = s.key * lightIntensity; keyLight.position.set(...s.keyPos); aimStudioLight(keyLight); }
-  if (fillLight) { fillLight.intensity = s.fill * lightIntensity; fillLight.position.set(...s.fillPos); aimStudioLight(fillLight); }
-  if (rimLight) { rimLight.intensity = s.rim * lightIntensity; rimLight.position.set(...s.rimPos); aimStudioLight(rimLight); }
-  if (hemiLight) hemiLight.intensity = s.hemi * lightIntensity;
 }
 
 function loadHDRI(name) {
@@ -501,31 +458,6 @@ function loadHDRI(name) {
   );
 }
 
-
-function setPanelOpen(open) {
-  document.body.classList.toggle('panel-open', open);
-  document.body.classList.toggle('panel-closed', !open);
-  const toggle = document.getElementById('drawerToggle');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    toggle.setAttribute('aria-label', open ? 'Hide options panel' : 'Show options panel');
-    const chev = toggle.querySelector('.chev');
-    if (chev) chev.textContent = open ? '›' : '‹';
-  }
-}
-
-function initPanelUI() {
-  const toggle = document.getElementById('drawerToggle');
-  if (!toggle) return;
-  toggle.onclick = () => {
-    const isOpen = document.body.classList.contains('panel-open');
-    setPanelOpen(!isOpen);
-  };
-  // Panel starts open and stays that way until the user explicitly taps the arrow.
-  setPanelOpen(true);
-}
-
-initPanelUI();
 
 init();
 
@@ -602,9 +534,11 @@ function init() {
   const lightIntensitySlider = document.getElementById('lightIntensity');
   const intensityValue = document.getElementById('intensityValue');
   lightIntensitySlider.addEventListener('input', () => {
-    lightIntensity = Math.max(1, Number(lightIntensitySlider.value) / 100);
+    // 0–100 UI range with the midpoint preserving the current 2.0x lighting.
+    // 50 = current level, 100 = 4.0x, 0 = lights off.
+    lightIntensity = Number(lightIntensitySlider.value) / 25;
     intensityValue.textContent = `${lightIntensitySlider.value}%`;
-    applyCurrentLightTuning();
+    applyLightingPreset(currentLightPreset);
   });
 
   document.querySelectorAll('.light-btn').forEach(btn => {
@@ -616,7 +550,6 @@ function init() {
     });
   });
 
-  wireAdvancedLighting();
   syncPlayButton();
 
   document.querySelectorAll('.swatch').forEach(btn => {
@@ -638,6 +571,7 @@ function init() {
 }
 
 function loadModel() {
+  loadTitle.textContent = `LOADING ${MODEL_NAME.toUpperCase()}`;
   const loader = new GLTFLoader();
 
   loader.load(
