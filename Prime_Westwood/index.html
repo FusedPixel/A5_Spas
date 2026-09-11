@@ -106,7 +106,7 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:3px;
+    gap:2px;
     overflow:hidden;
   }
   .option-group{
@@ -117,25 +117,25 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     align-items:center;
     gap:2px;
   }
-  .section-title{font-size:7px;line-height:1}
+  .section-title{font-size:6.5px;line-height:1}
   .swatches{
     width:auto;
     max-width:100%;
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
-    gap:3px;
+    gap:2px;
     overflow:hidden;
     padding:0;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:33px;
+    min-width:30px;
   }
-  .swatch{width:26px;height:26px}
+  .swatch{width:23px;height:23px}
   .swatch:after{inset:-2px}
-  .label{margin-top:1px;font-size:6px;max-width:42px;line-height:1.02}
+  .label{margin-top:1px;font-size:5.5px;max-width:40px;line-height:1.02}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -257,7 +257,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v48';
+const ASSET_VERSION = 'v49';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
