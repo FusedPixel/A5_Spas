@@ -101,12 +101,12 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     width:100%;
     height:clamp(128px, 16dvh, 150px);
     max-height:clamp(128px, 16dvh, 150px);
-    padding:4px 6px calc(4px + env(safe-area-inset-bottom));
+    padding:6px 6px calc(4px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    gap:2px;
+    justify-content:flex-start;
+    gap:1px;
     overflow:hidden;
   }
   .option-group{
@@ -115,27 +115,27 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex:0 0 auto;
     flex-direction:column;
     align-items:center;
-    gap:2px;
+    gap:0;
   }
-  .section-title{font-size:6.5px;line-height:1}
+  .section-title{font-size:6px;line-height:1;margin:0 0 1px}
   .swatches{
     width:auto;
     max-width:100%;
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
-    gap:2px;
+    gap:3px;
     overflow:hidden;
     padding:0;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:30px;
+    min-width:28px;
   }
-  .swatch{width:23px;height:23px}
+  .swatch{width:20px;height:20px}
   .swatch:after{inset:-2px}
-  .label{margin-top:1px;font-size:5.5px;max-width:40px;line-height:1.02}
+  .label{margin-top:1px;font-size:5px;max-width:40px;line-height:1}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -143,7 +143,8 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex-direction:row;
     align-items:center;
     justify-content:center;
-    gap:5px;
+    gap:4px;
+    margin-top:1px;
   }
   .lighting-controls{
     width:auto;
