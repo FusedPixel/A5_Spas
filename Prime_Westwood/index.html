@@ -221,7 +221,6 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     </div>
 
     <div class="actions">
-      <button class="action" id="copyBtn">COPY LINK</button>
     </div>
     <div id="status">Loading Westwood…</div>
   </aside>
@@ -258,7 +257,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v43';
+const ASSET_VERSION = 'v47';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -533,7 +532,6 @@ function init() {
   document.getElementById('reset').onclick = resetView;
   document.getElementById('play').onclick = toggleRotate;
   document.getElementById('full').onclick = toggleFullscreen;
-  document.getElementById('copyBtn').onclick = copyLink;
 
   const lightIntensitySlider = document.getElementById('lightIntensity');
   const intensityValue = document.getElementById('intensityValue');
@@ -995,23 +993,6 @@ function restoreHash() {
   });
 }
 
-async function copyLink() {
-  syncHash();
-
-  try {
-    await navigator.clipboard.writeText(location.href);
-
-    const button = document.getElementById('copyBtn');
-    const old = button.textContent;
-    button.textContent = 'COPIED';
-
-    setTimeout(() => {
-      button.textContent = old;
-    }, 1200);
-  } catch {
-    prompt('Copy this link:', location.href);
-  }
-}
 
 function resize() {
   const stage = document.getElementById('stage');
