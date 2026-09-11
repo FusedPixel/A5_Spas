@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A5 Spas – 3D Product Experience</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;color:#202020;font-family:Arial,Helvetica,sans-serif}
+#app{height:100vh;width:100%;display:grid;grid-template-columns:minmax(0,1fr) 390px}
+#stage{position:relative;min-width:0;background:#fff}
+#webgl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.brand{position:absolute;top:15px;left:16px;z-index:5;font-weight:700;font-size:15px;letter-spacing:5px}
+.subbrand{position:absolute;top:36px;left:16px;z-index:5;font-size:8px;letter-spacing:2px;color:#777}
+.product-name{position:absolute;top:63px;left:16px;z-index:5;font-size:17px;font-weight:600;color:#202020}
+#hint{position:absolute;left:50%;bottom:25px;transform:translateX(-50%);font-size:10px;letter-spacing:1px;color:#888;z-index:5;pointer-events:none}
+#help{position:absolute;right:18px;top:18px;width:44px;height:44px;border:0;background:#292929;color:#fff;font-size:23px;z-index:6;cursor:pointer}
+#controls{position:absolute;right:18px;bottom:15px;display:flex;gap:8px;z-index:6}
+.ctrl{width:38px;height:38px;border-radius:50%;border:1px solid #ddd;background:#fff;color:#222;cursor:pointer;font-size:16px}
+#loading{position:absolute;inset:0;background:#fff;z-index:20;display:flex;align-items:center;justify-content:center}
+.loadbox{width:260px;text-align:center}
+.loadtitle{font-size:11px;letter-spacing:2px;color:#555}
+.bar{height:1px;background:#ddd;margin:13px 0 8px}
+.bar span{display:block;height:100%;width:0;background:#222}
+.loadpct{font-size:10px;color:#777}
+.loaderror{font-size:12px;line-height:1.5;color:#333}
+.loaderror strong{display:block;margin-bottom:7px;font-size:14px}
+
+aside{border-left:1px solid #e5e5e5;background:#fff;padding:52px 30px 35px;overflow:auto}
+.side-intro{margin:0 0 42px;text-align:center;color:#444;font-size:15px;line-height:1.42}
+.section-title{margin:0 0 20px;font-size:15px;font-weight:700;letter-spacing:.1px}
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 16px;margin:0 0 38px;align-items:start}
+.swatch-wrap{width:auto;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
+.swatch{width:72px;height:72px;border-radius:50%;border:1px solid #a8a8a8;padding:0;background:#ddd;cursor:pointer;position:relative;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.swatch:after{content:"";position:absolute;inset:-4px;border:1.5px solid transparent;border-radius:50%;transition:border-color .18s ease}
+.swatch:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.10)}
+.swatch.selected:after{border-color:#202020}
+.swatch-inner{width:100%;height:100%;display:block;border-radius:50%}
+.label{margin-top:10px;font-size:11px;line-height:1.12;max-width:82px;color:#222}
+.cab-sandalwood .swatch-inner{background:radial-gradient(circle at 32% 25%,#a97945,#765332 58%,#4a372a)}
+.cab-ashwood .swatch-inner{background:linear-gradient(135deg,#7a7a7a,#a7a7a7 42%,#5f5f5f)}
+.cab-chestnut .swatch-inner{background:radial-gradient(circle at 35% 28%,#5c4742,#2c2525 60%,#1b1818)}
+.shell-white .swatch-inner{background:linear-gradient(145deg,#fff,#ececec)}
+.shell-grey .swatch-inner{background:linear-gradient(145deg,#bdbdbd,#909090)}
+.shell-moonstone .swatch-inner{background:repeating-linear-gradient(135deg,#fafafa 0 7px,#d5d5d5 8px,#f5f5f5 12px)}
+.shell-desert .swatch-inner{background:linear-gradient(135deg,#d2cbc1,#a59b8d 48%,#e5ded4)}
+.shell-smoked .swatch-inner{background:radial-gradient(circle at 28% 26%,#777,#242424 52%,#050505)}
+.actions{display:flex;gap:14px}
+.action{flex:1;border:0;background:#292929;color:#fff;padding:15px 12px;font-size:11px;font-weight:700;letter-spacing:.15px;cursor:pointer;transition:background .18s ease,transform .18s ease}.action:hover{background:#1f1f1f;transform:translateY(-1px)}
+#status{margin-top:14px;text-align:center;font-size:10px;line-height:1.45;color:#777;min-height:32px}
+#materialInfo{margin-top:8px;font-size:9px;line-height:1.45;color:#999;text-align:center}
+
+
+.shell-silver .swatch-inner{background:linear-gradient(145deg,#f4f5f3 0%,#cfd2cf 38%,#eef0ed 67%,#b9beb9 100%)}
+.shell-midnight .swatch-inner{background:linear-gradient(145deg,#27303a 0%,#10151c 38%,#34414d 63%,#0a0e13 100%)}
+.shell-espresso .swatch-inner{background:linear-gradient(145deg,#63483c 0%,#33251f 40%,#6e4b3b 69%,#211817 100%)}
+.shell-ocean .swatch-inner{background:linear-gradient(145deg,#0b5f94 0%,#063964 35%,#2478b0 60%,#06284b 100%)}
+.cab-lightgrey .swatch-inner{background:repeating-linear-gradient(0deg,#b8b8b5 0 14px,#d7d7d4 15px 18px,#9f9f9c 19px 20px)}
+.cab-charcoal .swatch-inner{background:repeating-linear-gradient(0deg,#555 0 13px,#686868 14px 17px,#4b4b4b 18px 19px)}
+.cab-black .swatch-inner{background:repeating-linear-gradient(0deg,#202020 0 13px,#373737 14px 17px,#171717 18px 19px)}
+.cab-darkgrey .swatch-inner{background:repeating-linear-gradient(0deg,#757575 0 13px,#878787 14px 17px,#686868 18px 19px)}
+
+
+.lighting-title{margin-top:2px}
+.lighting-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 28px}
+.light-btn{height:38px;border:1px solid #d7d7d7;background:#fff;color:#2a2a2a;font-size:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .18s ease}
+.light-btn:hover{border-color:#222;background:#fafafa}
+.light-btn.selected{background:#292929;color:#fff;border-color:#292929}
+.intensity-row{margin:-10px 0 28px}
+.intensity-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:9px;font-weight:700;letter-spacing:.55px;color:#555}
+#intensityValue{color:#222}
+.intensity-slider{width:100%;height:4px;margin:0;accent-color:#292929;cursor:pointer}
+
+.advanced-lighting{border-top:1px solid #e5e5e5;margin-top:4px;padding-top:16px;margin-bottom:26px}
+.advanced-lighting summary{cursor:pointer;list-style:none;font-size:10px;font-weight:700;letter-spacing:.7px;color:#333}
+.advanced-lighting summary::-webkit-details-marker{display:none}
+.advanced-lighting summary:after{content:'+';float:right;font-size:14px;line-height:10px;color:#888}
+.advanced-lighting[open] summary:after{content:'–'}
+.advanced-note{margin:10px 0 18px;font-size:9px;line-height:1.45;color:#888}
+.light-block{padding:14px 0 16px;border-top:1px solid #efefef}
+.light-block-title{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700;letter-spacing:.45px;color:#555;margin-bottom:8px}
+.light-block-title span:last-child{color:#222;font-variant-numeric:tabular-nums}
+.detail-slider{width:100%;height:3px;margin:0;accent-color:#292929;cursor:pointer}
+.axis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px}
+.axis-grid label{display:flex;align-items:center;gap:5px;font-size:8px;font-weight:700;color:#888}
+.axis-grid .detail-slider{flex:1;min-width:0}
+.reset-lighting{width:100%;height:32px;border:1px solid #d8d8d8;background:#fff;color:#333;font-size:9px;font-weight:700;letter-spacing:.6px;cursor:pointer;margin-top:2px}
+.reset-lighting:hover{border-color:#222}
+
+@media(max-width:900px){
+  .swatches{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 10px;}
+  #app{display:block}
+  aside{position:absolute;right:0;top:0;bottom:0;width:min(390px,90vw);z-index:10;transform:translateX(100%);transition:transform .25s ease;box-shadow:-10px 0 30px rgba(0,0,0,.08)}
+  aside.open{transform:translateX(0)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <main id="stage">
+    <canvas id="webgl"></canvas>
+    <div class="brand">A5 SPAS</div>
+    <div class="subbrand">3D PRODUCT EXPERIENCE</div>
+    <div class="product-name">Westwood</div>
+    <div id="hint">DRAG TO ROTATE • SCROLL TO ZOOM</div>
+    <div id="controls">
+      <button class="ctrl" id="reset" title="Reset view">↻</button>
+      <button class="ctrl" id="play" title="Auto rotate">▶</button>
+      <button class="ctrl" id="full" title="Fullscreen">⛶</button>
+    </div>
+
+    <div id="loading">
+      <div class="loadbox">
+        <div class="loadtitle" id="loadTitle">LOADING A5 SPA</div>
+        <div class="bar"><span id="loadBar"></span></div>
+        <div class="loadpct" id="loadPct">0%</div>
+      </div>
+    </div>
+  </main>
+
+  <aside id="panel">
+
+    <h3 class="section-title">SHELL OPTIONS</h3>
+    <div class="swatches">
+      <div class="swatch-wrap shell-silver"><button class="swatch selected" data-type="shell" data-value="silver-marble" aria-label="Silver Marble"><span class="swatch-inner"></span></button><div class="label">Silver Marble</div></div>
+      <div class="swatch-wrap shell-midnight"><button class="swatch" data-type="shell" data-value="midnight-opal" aria-label="Midnight Opal"><span class="swatch-inner"></span></button><div class="label">Midnight Opal</div></div>
+      <div class="swatch-wrap shell-espresso"><button class="swatch" data-type="shell" data-value="espresso" aria-label="Espresso"><span class="swatch-inner"></span></button><div class="label">Espresso</div></div>
+      <div class="swatch-wrap shell-ocean"><button class="swatch" data-type="shell" data-value="ocean-wave" aria-label="Ocean Wave"><span class="swatch-inner"></span></button><div class="label">Ocean Wave</div></div>
+    </div>
+
+    <h3 class="section-title">CABINET OPTIONS</h3>
+    <div class="swatches">
+      <div class="swatch-wrap cab-lightgrey"><button class="swatch" data-type="cabinet" data-value="ash-light-grey" aria-label="Ash (Light Grey)"><span class="swatch-inner"></span></button><div class="label">Ash (Light Grey)</div></div>
+      <div class="swatch-wrap cab-charcoal"><button class="swatch" data-type="cabinet" data-value="charcoal" aria-label="Charcoal"><span class="swatch-inner"></span></button><div class="label">Charcoal</div></div>
+      <div class="swatch-wrap cab-black"><button class="swatch" data-type="cabinet" data-value="black" aria-label="Black"><span class="swatch-inner"></span></button><div class="label">Black</div></div>
+      <div class="swatch-wrap cab-darkgrey"><button class="swatch" data-type="cabinet" data-value="dark-grey" aria-label="Dark Grey"><span class="swatch-inner"></span></button><div class="label">Dark Grey</div></div>
+    </div>
+
+
+    <h3 class="section-title lighting-title">LIGHTING SETUP</h3>
+    <div class="lighting-controls">
+      <button class="light-btn selected" data-light="setup1">STUDIO 01</button>
+      <button class="light-btn" data-light="setup2">STUDIO 02</button>
+    </div>
+
+    <div class="intensity-row">
+      <div class="intensity-head">
+        <span>MASTER LIGHT INTENSITY</span>
+        <span id="intensityValue">100%</span>
+      </div>
+      <input id="lightIntensity" class="intensity-slider" type="range" min="0" max="150" value="100" step="1" aria-label="Master light intensity">
+    </div>
+
+    <details class="advanced-lighting">
+      <summary>ADVANCED LIGHTING</summary>
+      <div class="advanced-note">Adjust each studio light until it matches your V-Ray reference.</div>
+
+      <div class="light-block">
+        <div class="light-block-title"><span>KEY LIGHT</span><span id="keyValue">2.20</span></div>
+        <input id="keyIntensity" class="detail-slider" type="range" min="0" max="4" value="1.65" step="0.01">
+        <div class="axis-grid">
+          <label>X <input id="keyX" class="detail-slider" type="range" min="-10" max="10" value="5" step="0.1"></label>
+          <label>Y <input id="keyY" class="detail-slider" type="range" min="0" max="14" value="8" step="0.1"></label>
+          <label>Z <input id="keyZ" class="detail-slider" type="range" min="-10" max="10" value="4" step="0.1"></label>
+        </div>
+      </div>
+
+      <div class="light-block">
+        <div class="light-block-title"><span>FILL LIGHT</span><span id="fillValue">0.10</span></div>
+        <input id="fillIntensity" class="detail-slider" type="range" min="0" max="2" value="0.34" step="0.01">
+        <div class="axis-grid">
+          <label>X <input id="fillX" class="detail-slider" type="range" min="-10" max="10" value="-4" step="0.1"></label>
+          <label>Y <input id="fillY" class="detail-slider" type="range" min="0" max="14" value="4" step="0.1"></label>
+          <label>Z <input id="fillZ" class="detail-slider" type="range" min="-10" max="10" value="6" step="0.1"></label>
+        </div>
+      </div>
+
+      <div class="light-block">
+        <div class="light-block-title"><span>RIM / BACK LIGHT</span><span id="rimValue">0.70</span></div>
+        <input id="rimIntensity" class="detail-slider" type="range" min="0" max="3" value="0.42" step="0.01">
+        <div class="axis-grid">
+          <label>X <input id="rimX" class="detail-slider" type="range" min="-10" max="10" value="-3" step="0.1"></label>
+          <label>Y <input id="rimY" class="detail-slider" type="range" min="0" max="14" value="6" step="0.1"></label>
+          <label>Z <input id="rimZ" class="detail-slider" type="range" min="-10" max="10" value="-7" step="0.1"></label>
+        </div>
+      </div>
+
+      <div class="light-block">
+        <div class="light-block-title"><span>AMBIENT / SKY</span><span id="hemiValue">0.05</span></div>
+        <input id="hemiIntensity" class="detail-slider" type="range" min="0" max="0.5" value="0.07" step="0.01">
+      </div>
+
+      <button id="resetLighting" class="reset-lighting">RESET LIGHTING</button>
+    </details>
+
+    <div class="actions">
+      <button class="action" id="copyBtn">COPY LINK</button>
+    </div>
+    <div id="status">Loading 3D model…</div>
+</aside>
+</div>
+
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.1/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {HDRLoader} from 'three/addons/loaders/HDRLoader.js';
+
+const ASSET_ROOT =
+  'https://raw.githubusercontent.com/FusedPixel/A5_Spas/main/';
+
+const MODEL_URL =
+  ASSET_ROOT + 'Prime_Westwood/Prime_Westwood_Spa_Export_gltf.glb';
+
+const MATERIAL_ROOT = ASSET_ROOT + 'Materials/';
+
+const CASING_FINISHES = {
+  'ash-light-grey': {
+    name: 'Ash (Light Grey)',
+    basecolor: MATERIAL_ROOT + 'casing/casing_ash_light_grey_basecolor.jpg',
+    normal: MATERIAL_ROOT + 'casing/casing_ash_light_grey_normal.jpg',
+    roughness: MATERIAL_ROOT + 'casing/casing_ash_light_grey_roughness.jpg'
+  },
+  charcoal: {
+    name: 'Charcoal',
+    basecolor: MATERIAL_ROOT + 'casing/casing_charcoal_basecolor.jpg',
+    normal: MATERIAL_ROOT + 'casing/casing_charcoal_normal.jpg',
+    roughness: MATERIAL_ROOT + 'casing/casing_charcoal_roughness.jpg'
+  },
+  black: {
+    name: 'Black',
+    basecolor: MATERIAL_ROOT + 'casing/casing_black_basecolor.jpg',
+    normal: MATERIAL_ROOT + 'casing/casing_black_normal.jpg',
+    roughness: MATERIAL_ROOT + 'casing/casing_black_roughness.jpg'
+  },
+  'dark-grey': {
+    name: 'Dark Grey',
+    basecolor: MATERIAL_ROOT + 'casing/casing_dark_grey_basecolor.jpg',
+    normal: MATERIAL_ROOT + 'casing/casing_dark_grey_normal.jpg',
+    roughness: MATERIAL_ROOT + 'casing/casing_dark_grey_roughness.jpg'
+  }
+};
+
+const SHELL_FINISHES = {
+  'silver-marble': {
+    name: 'Silver Marble',
+    basecolor: MATERIAL_ROOT + 'shell/shell_silver_marble_basecolor.jpg'
+  },
+  'midnight-opal': {
+    name: 'Midnight Opal',
+    basecolor: MATERIAL_ROOT + 'shell/shell_midnight_opal_basecolor.jpg'
+  },
+  espresso: {
+    name: 'Espresso',
+    basecolor: MATERIAL_ROOT + 'shell/shell_expresso_basecolor.jpg'
+  },
+  'ocean-wave': {
+    name: 'Ocean Wave',
+    basecolor: MATERIAL_ROOT + 'shell/shell_ocean_wave_basecolor.jpg'
+  }
+};
+
+const state = {
+  casing: 'ash-light-grey',
+  shell: 'silver-marble',
+  autoRotate: false
+};
+
+const canvas = document.getElementById('webgl');
+const loading = document.getElementById('loading');
+const loadBar = document.getElementById('loadBar');
+const loadPct = document.getElementById('loadPct');
+const loadTitle = document.getElementById('loadTitle');
+const status = document.getElementById('status');
+
+let scene, camera, renderer, controls, model;
+let casingMaterials = [];
+let shellMaterials = [];
+let casingEntries = [];
+let textureCache = new Map();
+let hdrTexture = null;
+let keyLight = null;
+let fillLight = null;
+let rimLight = null;
+let hemiLight = null;
+let currentLightPreset = 'setup1';
+let lightIntensity = 1.0;
+
+const LIGHT_PRESETS = {
+  setup1: {
+    key: 1.65, fill: 0.34, rim: 0.42, hemi: 0.07, exposure: 1.00, env: 0.30,
+    keyPos: [5, 8, 4], fillPos: [-4, 4, 6], rimPos: [-3, 6, -7]
+  },
+  setup2: {
+    key: 1.40, fill: 0.42, rim: 0.55, hemi: 0.08, exposure: 1.02, env: 0.36,
+    keyPos: [4, 7, 3], fillPos: [-5, 4, 6], rimPos: [-4, 7, -8]
+  }
+};
+
+let lightSettings = structuredClone(LIGHT_PRESETS);
+
+const HDRI_URLS = {
+  setup1: ASSET_ROOT + 'HDRI/HDRI_001.hdr',
+  setup2: ASSET_ROOT + 'HDRI/HDRI_002.hdr'
+};
+
+let hdrLoadToken = 0;
+
+function applyLightingPreset(name) {
+  const p = LIGHT_PRESETS[name] || LIGHT_PRESETS.setup1;
+  currentLightPreset = LIGHT_PRESETS[name] ? name : 'setup1';
+
+  lightSettings[currentLightPreset] = structuredClone(lightSettings[currentLightPreset] || p);
+  const s = lightSettings[currentLightPreset];
+
+  renderer.toneMappingExposure = p.exposure;
+  if (keyLight) {
+    keyLight.intensity = s.key * lightIntensity;
+    keyLight.position.set(...s.keyPos);
+  }
+  if (fillLight) {
+    fillLight.intensity = s.fill * lightIntensity;
+    fillLight.position.set(...s.fillPos);
+  }
+  if (rimLight) {
+    rimLight.intensity = s.rim * lightIntensity;
+    rimLight.position.set(...s.rimPos);
+  }
+  if (hemiLight) hemiLight.intensity = s.hemi * lightIntensity;
+  if (scene && hdrTexture) scene.environmentIntensity = p.env;
+
+  syncAdvancedControls(s);
+
+  document.querySelectorAll('.light-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.light === currentLightPreset);
+  });
+
+  loadHDRI(currentLightPreset);
+  syncHash();
+}
+
+function syncAdvancedControls(s) {
+  const set = (id, value, digits=2) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = value;
+    const out = document.getElementById(id.replace('Intensity','Value'));
+    if (out) out.textContent = Number(value).toFixed(digits);
+  };
+  set('keyIntensity', s.key); set('fillIntensity', s.fill); set('rimIntensity', s.rim); set('hemiIntensity', s.hemi);
+  [['keyX',s.keyPos[0]],['keyY',s.keyPos[1]],['keyZ',s.keyPos[2]],['fillX',s.fillPos[0]],['fillY',s.fillPos[1]],['fillZ',s.fillPos[2]],['rimX',s.rimPos[0]],['rimY',s.rimPos[1]],['rimZ',s.rimPos[2]]].forEach(([id,v])=>{ const el=document.getElementById(id); if(el) el.value=v; });
+}
+
+function wireAdvancedLighting() {
+  const get = id => document.getElementById(id);
+  const s = () => lightSettings[currentLightPreset];
+
+  const intensityBindings = [
+    ['keyIntensity','key','keyValue'],
+    ['fillIntensity','fill','fillValue'],
+    ['rimIntensity','rim','rimValue'],
+    ['hemiIntensity','hemi','hemiValue']
+  ];
+  intensityBindings.forEach(([id,key,outId]) => {
+    get(id).addEventListener('input', e => {
+      const v = Number(e.target.value);
+      s()[key] = v;
+      get(outId).textContent = v.toFixed(2);
+      applyCurrentLightTuning();
+    });
+  });
+
+  const positionBindings = [
+    ['keyX','keyPos',0],['keyY','keyPos',1],['keyZ','keyPos',2],
+    ['fillX','fillPos',0],['fillY','fillPos',1],['fillZ','fillPos',2],
+    ['rimX','rimPos',0],['rimY','rimPos',1],['rimZ','rimPos',2]
+  ];
+  positionBindings.forEach(([id,key,idx]) => {
+    get(id).addEventListener('input', e => {
+      s()[key][idx] = Number(e.target.value);
+      applyCurrentLightTuning();
+    });
+  });
+
+  get('resetLighting').addEventListener('click', () => {
+    lightSettings[currentLightPreset] = structuredClone(LIGHT_PRESETS[currentLightPreset]);
+    applyLightingPreset(currentLightPreset);
+  });
+}
+
+function applyCurrentLightTuning() {
+  const s = lightSettings[currentLightPreset];
+  if (keyLight) { keyLight.intensity = s.key * lightIntensity; keyLight.position.set(...s.keyPos); }
+  if (fillLight) { fillLight.intensity = s.fill * lightIntensity; fillLight.position.set(...s.fillPos); }
+  if (rimLight) { rimLight.intensity = s.rim * lightIntensity; rimLight.position.set(...s.rimPos); }
+  if (hemiLight) hemiLight.intensity = s.hemi * lightIntensity;
+}
+
+function loadHDRI(name) {
+  const url = HDRI_URLS[name];
+  if (!url || !renderer || !scene) return;
+
+  const token = ++hdrLoadToken;
+  const loader = new HDRLoader();
+
+  loader.load(
+    url,
+    texture => {
+      if (token !== hdrLoadToken) {
+        texture.dispose();
+        return;
+      }
+
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      texture.colorSpace = THREE.LinearSRGBColorSpace;
+
+      const old = hdrTexture;
+      hdrTexture = texture;
+      scene.environment = texture;
+      scene.environmentIntensity = LIGHT_PRESETS[currentLightPreset].env;
+      old?.dispose();
+    },
+    undefined,
+    err => {
+      console.warn(`HDRI failed to load for ${name}:`, err);
+      // The directional/hemisphere lights still apply, so the preset remains functional.
+      if (token === hdrLoadToken && scene) {
+        scene.environmentIntensity = 0;
+      }
+    }
+  );
+}
+
+init();
+
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
+
+  camera = new THREE.PerspectiveCamera(28, 1, 0.01, 5000);
+  camera.position.set(4.4, 3.0, 4.4);
+
+  renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.98;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // Controlled V-Ray-inspired studio key/fill/rim. The HDRI is kept mainly for reflections and broad ambience.
+  keyLight = new THREE.DirectionalLight(0xffffff, 0.65);
+  keyLight.position.set(5, 8, 4);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(1024, 1024);
+  keyLight.shadow.radius = 5;
+  keyLight.shadow.bias = -0.00035;
+  keyLight.shadow.normalBias = 0.015;
+  scene.add(keyLight);
+
+  fillLight = new THREE.DirectionalLight(0xffffff, 0.10);
+  fillLight.position.set(-4, 3, 5);
+  scene.add(fillLight);
+
+  rimLight = new THREE.DirectionalLight(0xffffff, 0.18);
+  rimLight.position.set(-3, 6, -7);
+  scene.add(rimLight);
+
+  hemiLight = new THREE.HemisphereLight(0xffffff, 0xaaaaaa, 0.07);
+  scene.add(hemiLight);
+
+  // Apply the initial preset only after all lights exist.
+  applyLightingPreset(currentLightPreset);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.07;
+  controls.enablePan = false;
+  controls.minDistance = 2;
+  controls.maxDistance = 14;
+  controls.autoRotateSpeed = 0.8;
+  controls.target.set(0, 0.6, 0);
+
+  renderer.setAnimationLoop(animate);
+  window.addEventListener('resize', resize);
+
+  document.getElementById('reset').onclick = resetView;
+  document.getElementById('play').onclick = toggleRotate;
+  document.getElementById('full').onclick = toggleFullscreen;
+  document.getElementById('copyBtn').onclick = copyLink;
+
+  const lightIntensitySlider = document.getElementById('lightIntensity');
+  const intensityValue = document.getElementById('intensityValue');
+  lightIntensitySlider.addEventListener('input', () => {
+    lightIntensity = Number(lightIntensitySlider.value) / 100;
+    intensityValue.textContent = `${lightIntensitySlider.value}%`;
+    applyCurrentLightTuning();
+  });
+
+  document.querySelectorAll('.light-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentLightPreset = btn.dataset.light;
+      document.querySelectorAll('.light-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      applyLightingPreset(currentLightPreset);
+    });
+  });
+
+  wireAdvancedLighting();
+
+  document.querySelectorAll('.swatch').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const uiType = btn.dataset.type;
+      const type = uiType === 'cabinet' ? 'casing' : 'shell';
+      const value = btn.dataset.value;
+
+      state[type] = value;
+      selectButton(btn);
+      await applyFinish(type, value);
+      syncHash();
+    });
+  });
+
+  resize();
+  restoreHash();
+  loadModel();
+}
+
+function loadModel() {
+  const loader = new GLTFLoader();
+
+  loader.load(
+    MODEL_URL,
+    gltf => {
+      model = gltf.scene;
+      scene.add(model);
+
+      model.traverse(obj => {
+        if (!obj.isMesh || !obj.material) return;
+
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+
+        mats.forEach(mat => {
+          if (!mat) return;
+
+          const materialName = (mat.name || '').toLowerCase();
+          const objectName = (obj.name || '').toLowerCase();
+          const combined = materialName + ' ' + objectName;
+
+          // Give the acrylic shell a cleaner, brighter studio response.
+          // This does not alter the texture itself; it only controls the
+          // PBR response so the shell reads closer to the V-Ray reference.
+          if (materialName === 'shell_silver_marble') {
+            if ('metalness' in mat) mat.metalness = 0.0;
+            if ('roughness' in mat) mat.roughness = 0.18;
+            if ('envMapIntensity' in mat) mat.envMapIntensity = 1.45;
+            if ('clearcoat' in mat) mat.clearcoat = 0.12;
+            if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.14;
+            mat.needsUpdate = true;
+          }
+
+          if (isCasingTarget(objectName, materialName)) {
+            casingMaterials.push(mat);
+            casingEntries.push({ material: mat, isCorner: false });
+          }
+
+          if (isShellTarget(objectName, materialName)) {
+            shellMaterials.push(mat);
+          }
+        });
+      });
+
+      casingMaterials = [...new Set(casingMaterials)];
+      shellMaterials = [...new Set(shellMaterials)];
+
+      // Exact material indices in Prime_Westwood_Spa_Export_gltf(2).glb:
+      // 0 = shell_silver_marble
+      // 9 = casing_wood_ash_light_grey
+      console.log('A5 Westwood material targets');
+      console.log('Casing materials:', casingMaterials.map(m => m.name));
+      console.log('Shell materials:', shellMaterials.map(m => m.name));
+
+      fitModel();
+      loading.style.display = 'none';
+
+      document.querySelectorAll('.light-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.light === currentLightPreset);
+      });
+      applyLightingPreset(currentLightPreset);
+
+      // Apply initial choices from the current URL/defaults.
+      Promise.all([
+        applyFinish('casing', state.casing),
+        applyFinish('shell', state.shell)
+      ]).catch(err => console.error('Initial material setup failed:', err));
+
+      updateStatus();
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        loadBar.style.width = pct + '%';
+        loadPct.textContent = pct + '%';
+      } else {
+        loadPct.textContent = 'Downloading…';
+      }
+    },
+    err => {
+      console.error('GLB load error:', err);
+      document.querySelector('.bar').style.display = 'none';
+      loadTitle.innerHTML =
+        '<div class="loaderror"><strong>Unable to load the 3D model.</strong>' +
+        '<br>Check the GitHub model URL and browser console.</div>';
+      loadPct.textContent = MODEL_URL;
+      status.textContent = 'Model failed to load.';
+    }
+  );
+}
+
+function isCasingTarget(objectName, materialName) {
+  if (materialName !== 'casing_wood_ash_light_grey') return false;
+
+  // Only the main textured casing panels use the shared casing texture.
+  // The blue corner light geometry is deliberately kept separate and untouched.
+  return objectName === 'casing_side' || objectName === 'casing_corner';
+}
+
+function isShellTarget(objectName, materialName) {
+  return materialName === 'shell_silver_marble';
+}
+
+async function applyFinish(type, key) {
+  if (!model) return;
+
+  const normalizedType = type === 'cabinet' ? 'casing' : type;
+  const finish = normalizedType === 'casing'
+    ? CASING_FINISHES[key]
+    : SHELL_FINISHES[key];
+
+  if (!finish) return;
+
+  try {
+    if (normalizedType === 'casing') {
+      const [baseColor, normal, roughness] = await Promise.all([
+        loadTexture(finish.basecolor, true),
+        loadTexture(finish.normal, false),
+        loadTexture(finish.roughness, false)
+      ]);
+
+      // Use each mesh's exported UVs exactly as authored. Do not rotate the corner UVs.
+      casingEntries.forEach(entry => {
+        const mat = entry.material;
+        const target = entry.isCorner ? mat.clone() : mat;
+
+        target.map = entry.isCorner ? baseColor.clone() : baseColor;
+        target.normalMap = entry.isCorner ? normal.clone() : normal;
+        target.roughnessMap = entry.isCorner ? roughness.clone() : roughness;
+        target.color.set(0xffffff);
+        if ('metalness' in target) target.metalness = 0.0;
+
+
+        target.needsUpdate = true;
+      });
+
+      // Preserve the original material list for logging/deduplication.
+      casingMaterials = [...new Set(casingMaterials)];
+
+      status.textContent = `Casing: ${finish.name} • Shell: ${SHELL_FINISHES[state.shell].name}`;
+    } else {
+      const baseColor = await loadTexture(finish.basecolor, true);
+
+      shellMaterials.forEach(mat => {
+        mat.map = baseColor;
+        mat.color.set(0xffffff);
+        if ('metalness' in mat) mat.metalness = 0.0;
+        if ('roughness' in mat) mat.roughness = 0.18;
+        if ('envMapIntensity' in mat) mat.envMapIntensity = 1.45;
+        if ('clearcoat' in mat) mat.clearcoat = 0.12;
+        if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.14;
+        mat.needsUpdate = true;
+      });
+
+      status.textContent = `Casing: ${CASING_FINISHES[state.casing].name} • Shell: ${finish.name}`;
+    }
+  } catch (err) {
+    console.error(`Failed to load ${type} finish "${key}"`, err);
+    status.textContent = `Unable to load ${finish.name} — check the GitHub filename/path.`;
+  }
+}
+
+function loadTexture(url, srgb) {
+  if (textureCache.has(url)) return textureCache.get(url);
+
+  const promise = new Promise((resolve, reject) => {
+    const loader = new THREE.TextureLoader();
+
+    loader.load(
+      url,
+      texture => {
+        // glTF-style UV/image orientation for externally loaded maps.
+        texture.flipY = false;
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+
+        if (srgb) {
+          texture.colorSpace = THREE.SRGBColorSpace;
+        } else {
+          texture.colorSpace = THREE.NoColorSpace;
+        }
+
+        texture.anisotropy = Math.min(
+          renderer.capabilities.getMaxAnisotropy(),
+          8
+        );
+
+        texture.needsUpdate = true;
+        console.log('Loaded A5 finish texture:', url);
+        resolve(texture);
+      },
+      undefined,
+      error => {
+        textureCache.delete(url);
+        reject(new Error(`Texture failed: ${url}`));
+      }
+    );
+  });
+
+  textureCache.set(url, promise);
+  return promise;
+}
+
+function fitModel() {
+  if (!model) return;
+
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+
+  model.position.sub(center);
+
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const dist = maxDim * 1.55;
+
+  camera.near = Math.max(0.01, maxDim / 1000);
+  camera.far = Math.max(100, maxDim * 20);
+  camera.position.set(dist * 0.95, dist * 0.55, dist * 0.95);
+
+  controls.target.set(0, -size.y * 0.12, 0);
+  controls.minDistance = maxDim * 0.55;
+  controls.maxDistance = maxDim * 4;
+  controls.update();
+}
+
+function resetView() {
+  if (!model) return;
+
+  fitModel();
+  state.autoRotate = false;
+  controls.autoRotate = false;
+  document.getElementById('play').textContent = '▶';
+}
+
+function toggleRotate() {
+  state.autoRotate = !state.autoRotate;
+  controls.autoRotate = state.autoRotate;
+  document.getElementById('play').textContent =
+    state.autoRotate ? '❚❚' : '▶';
+}
+
+function toggleFullscreen() {
+  const el = document.getElementById('stage');
+
+  if (!document.fullscreenElement) {
+    el.requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+}
+
+function selectButton(btn) {
+  document
+    .querySelectorAll(`.swatch[data-type="${btn.dataset.type}"]`)
+    .forEach(x => x.classList.remove('selected'));
+
+  btn.classList.add('selected');
+}
+
+function updateStatus() {
+  status.textContent =
+    `Casing: ${CASING_FINISHES[state.casing].name} • Shell: ${SHELL_FINISHES[state.shell].name}`;
+}
+
+function syncHash() {
+  history.replaceState(
+    null,
+    '',
+    `#casing=${encodeURIComponent(state.casing)}&shell=${encodeURIComponent(state.shell)}&light=${encodeURIComponent(currentLightPreset)}`
+  );
+}
+
+function restoreHash() {
+  const params = new URLSearchParams(location.hash.replace(/^#/, ''));
+
+  if (CASING_FINISHES[params.get('casing')]) {
+    state.casing = params.get('casing');
+  } else if (CASING_FINISHES[params.get('cabinet')]) {
+    state.casing = params.get('cabinet');
+  }
+
+  if (SHELL_FINISHES[params.get('shell')]) {
+    state.shell = params.get('shell');
+  }
+
+  if (['setup1','setup2'].includes(params.get('light'))) {
+    currentLightPreset = params.get('light');
+  }
+
+  document.querySelectorAll('.swatch').forEach(btn => {
+    const type = btn.dataset.type === 'cabinet' ? 'casing' : 'shell';
+    btn.classList.toggle('selected', state[type] === btn.dataset.value);
+  });
+}
+
+async function copyLink() {
+  syncHash();
+
+  try {
+    await navigator.clipboard.writeText(location.href);
+
+    const button = document.getElementById('copyBtn');
+    const old = button.textContent;
+    button.textContent = 'COPIED';
+
+    setTimeout(() => {
+      button.textContent = old;
+    }, 1200);
+  } catch {
+    prompt('Copy this link:', location.href);
+  }
+}
+
+function resize() {
+  const stage = document.getElementById('stage');
+  const w = stage.clientWidth;
+  const h = stage.clientHeight;
+
+  renderer.setSize(w, h, false);
+
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+function animate() {
+  controls.update();
+  renderer.render(scene, camera);
+}
+</script>
+</body>
+</html>
