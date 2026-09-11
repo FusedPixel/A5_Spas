@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;color:#202020;font-family:Arial,Helvetica,sans-serif}
-#app{height:100vh;width:100%;position:relative}
+#app{height:100dvh;width:100%;position:relative}
 #stage{position:absolute;inset:0;min-width:0;background:#fff}
 #webgl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 .brand{position:absolute;top:15px;left:16px;z-index:5;font-weight:700;font-size:15px;letter-spacing:5px}
@@ -93,21 +93,21 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
 
 /* Narrow portrait layout for mobile/tablet pages. Desktop/fullscreen remains unchanged. */
 @media (max-width: 900px) and (orientation: portrait){
-  #app,#stage{min-height:100vh;height:100vh;width:100vw}
-  #controls{left:12px;bottom:auto;top:78px;gap:7px}
-  .ctrl{width:36px;height:36px}
+  #app,#stage{min-height:100dvh;height:100dvh;width:100vw}
+  #controls{left:12px;bottom:auto;top:70px;gap:6px}
+  .ctrl{width:34px;height:34px}
   aside{
     left:0;right:0;bottom:0;
     width:100%;
-    max-height:25vh;
-    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    height:clamp(168px, 21dvh, 220px);
+    max-height:clamp(168px, 21dvh, 220px);
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:7px;
-    overflow-x:hidden;
-    overflow-y:auto;
+    gap:5px;
+    overflow:hidden;
   }
   .option-group{
     width:auto;
@@ -115,29 +115,27 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex:0 0 auto;
     flex-direction:column;
     align-items:center;
-    gap:4px;
+    gap:2px;
   }
-  .section-title{font-size:9px}
+  .section-title{font-size:8px;line-height:1}
   .swatches{
     width:auto;
     max-width:100%;
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
-    gap:5px;
-    overflow-x:auto;
-    overflow-y:hidden;
-    padding:1px 1px 2px;
-    scrollbar-width:none;
+    gap:4px;
+    overflow:hidden;
+    padding:0 1px;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:40px;
+    min-width:36px;
   }
-  .swatch{width:32px;height:32px}
-  .swatch:after{inset:-3px}
-  .label{margin-top:3px;font-size:7px;max-width:48px}
+  .swatch{width:28px;height:28px}
+  .swatch:after{inset:-2px}
+  .label{margin-top:2px;font-size:6.5px;max-width:44px;line-height:1.05}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -145,21 +143,21 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex-direction:row;
     align-items:center;
     justify-content:center;
-    gap:10px;
+    gap:7px;
   }
   .lighting-controls{
     width:auto;
     max-width:none;
     display:flex;
-    gap:5px;
+    gap:4px;
   }
-  .light-btn{width:auto;min-width:74px;height:30px;padding:0 8px;font-size:8px}
-  .intensity-row{width:145px}
-  .intensity-head{margin-bottom:4px;font-size:7px}
-  .intensity-slider{height:4px}
+  .light-btn{width:auto;min-width:68px;height:27px;padding:0 7px;font-size:7.5px}
+  .intensity-row{width:132px}
+  .intensity-head{margin-bottom:3px;font-size:6.5px}
+  .intensity-slider{height:3px}
   .actions{width:auto;justify-content:center}
-  .action{padding:8px 12px;font-size:9px}
-  #status{width:auto;max-width:120px;text-align:center;font-size:8px}
+  .action{padding:6px 11px;font-size:8px}
+  #status{width:auto;max-width:110px;text-align:center;font-size:7px}
 }
 
 </style>
@@ -260,7 +258,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v41';
+const ASSET_VERSION = 'v43';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -631,7 +629,7 @@ function loadModel() {
       // Exact material indices in the exported Westwood GLB:
       // 0 = shell_silver_marble
       // 9 = casing_wood_ash_light_grey
-      console.log('A5 Westwood material targets / v29');
+      console.log('A5 Westwood material targets / v42');
       console.log('Casing materials:', casingMaterials.map(m => m.name));
       console.log('Shell materials:', shellMaterials.map(m => m.name));
 
@@ -675,9 +673,14 @@ function loadModel() {
 function isCasingTarget(objectName, materialName) {
   if (materialName !== 'casing_wood_ash_light_grey') return false;
 
-  // Only the main textured casing panels use the shared casing texture.
-  // The blue corner light geometry is deliberately kept separate and untouched.
-  return objectName === 'casing_side' || objectName === 'casing_corner';
+  // Keep the dedicated blue light emitter material untouched, but apply the
+  // configurable casing finish to all of the surrounding casing geometry.
+  return (
+    objectName === 'casing_side' ||
+    objectName === 'casing_side_edge' ||
+    objectName === 'casing_corner' ||
+    objectName === 'casing_corner_light_edge'
+  );
 }
 
 function isShellTarget(objectName, materialName) {
@@ -808,7 +811,7 @@ function fitModel() {
   camera.far = Math.max(100, maxDim * 20);
 
   fitDirection.set(0.95, 0.55, 0.95).normalize();
-  fitTarget.set(0, -size.y * 0.08, 0);
+  fitTarget.set(0, portraitFitTargetYOffset(size.y), 0);
 
   controls.target.copy(fitTarget);
   controls.minDistance = maxDim * 0.55;
@@ -826,17 +829,33 @@ function fitModel() {
 
 let lastFitDistance = 1;
 
+function portraitFitTargetYOffset(modelHeight) {
+  const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
+  if (!portrait) return -modelHeight * 0.08;
+
+  const panel = document.getElementById('panel');
+  const stage = document.getElementById('stage');
+  const stageRect = stage.getBoundingClientRect();
+  const visibleFraction = panel ? Math.max(0.58, Math.min(0.9, (panel.getBoundingClientRect().top - stageRect.top) / Math.max(1, stageRect.height))) : 0.75;
+  // Shift the camera target down as the options area grows so the spa stays
+  // centred in the usable viewer region above the options.
+  return -modelHeight * (0.08 + (1 - visibleFraction) * 0.65);
+}
+
 function calculateDynamicFitDistance() {
   if (!model) return lastFitDistance;
 
   const stage = document.getElementById('stage');
   const w = Math.max(1, stage.clientWidth);
-  const h = Math.max(1, stage.clientHeight);
+  const stageRect = stage.getBoundingClientRect();
+  const h = Math.max(1, stageRect.height);
   const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
 
   const panel = document.getElementById('panel');
-  const panelHeight = portrait && panel ? panel.clientHeight : 0;
-  const visibleHeight = Math.max(1, h - panelHeight);
+  // On mobile Safari the browser chrome changes the visual viewport. Use the
+  // actual panel top edge so the model is fitted to the real visible 3D area.
+  const panelTop = portrait && panel ? panel.getBoundingClientRect().top - stageRect.top : h;
+  const visibleHeight = Math.max(1, Math.min(h, panelTop));
   const visibleAspect = w / visibleHeight;
 
   const box = new THREE.Box3().setFromObject(model);
@@ -848,7 +867,7 @@ function calculateDynamicFitDistance() {
   const limitingFov = Math.min(verticalFov, horizontalFov);
 
   // A little breathing room keeps the complete spa visible without looking tiny.
-  const margin = portrait ? 1.22 : 1.12;
+  const margin = portrait ? 1.28 : 1.12;
   return sphere.radius / Math.tan(limitingFov * 0.5) * margin;
 }
 
@@ -858,13 +877,15 @@ function updateResponsiveFit() {
   const currentDistance = camera.position.distanceTo(controls.target);
   const previousFit = Math.max(0.001, lastFitDistance);
   const zoomRatio = Math.min(2.5, Math.max(0.75, currentDistance / previousFit));
+  const portrait = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
 
   const fitDistance = calculateDynamicFitDistance();
   lastFitDistance = fitDistance;
 
-  // Keep the user's zoom level when resizing. If they were at 1.15x fit,
-  // resizing the page keeps them at 1.15x the newly calculated fit distance.
-  const newDistance = fitDistance * zoomRatio;
+  // In portrait mode the viewer must always prioritise showing the complete
+  // spa when the browser/page gets narrower or shorter. Desktop keeps the
+  // user's zoom ratio.
+  const newDistance = portrait ? fitDistance : fitDistance * zoomRatio;
   const direction = camera.position.clone().sub(controls.target);
   if (direction.lengthSq() < 1e-8) direction.copy(fitDirection);
   direction.normalize();
