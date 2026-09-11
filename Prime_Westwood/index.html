@@ -99,14 +99,14 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
   aside{
     left:0;right:0;bottom:0;
     width:100%;
-    height:clamp(168px, 21dvh, 220px);
-    max-height:clamp(168px, 21dvh, 220px);
-    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+    height:clamp(128px, 16dvh, 150px);
+    max-height:clamp(128px, 16dvh, 150px);
+    padding:4px 6px calc(4px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:5px;
+    gap:3px;
     overflow:hidden;
   }
   .option-group{
@@ -117,25 +117,25 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     align-items:center;
     gap:2px;
   }
-  .section-title{font-size:8px;line-height:1}
+  .section-title{font-size:7px;line-height:1}
   .swatches{
     width:auto;
     max-width:100%;
     display:flex;
     flex-wrap:nowrap;
     justify-content:center;
-    gap:4px;
+    gap:3px;
     overflow:hidden;
-    padding:0 1px;
+    padding:0;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:36px;
+    min-width:33px;
   }
-  .swatch{width:28px;height:28px}
+  .swatch{width:26px;height:26px}
   .swatch:after{inset:-2px}
-  .label{margin-top:2px;font-size:6.5px;max-width:44px;line-height:1.05}
+  .label{margin-top:1px;font-size:6px;max-width:42px;line-height:1.02}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -143,7 +143,7 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     flex-direction:row;
     align-items:center;
     justify-content:center;
-    gap:7px;
+    gap:5px;
   }
   .lighting-controls{
     width:auto;
@@ -151,13 +151,13 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     display:flex;
     gap:4px;
   }
-  .light-btn{width:auto;min-width:68px;height:27px;padding:0 7px;font-size:7.5px}
-  .intensity-row{width:132px}
-  .intensity-head{margin-bottom:3px;font-size:6.5px}
+  .light-btn{width:auto;min-width:64px;height:25px;padding:0 6px;font-size:7px}
+  .intensity-row{width:124px}
+  .intensity-head{margin-bottom:2px;font-size:6px}
   .intensity-slider{height:3px}
   .actions{width:auto;justify-content:center}
   .action{padding:6px 11px;font-size:8px}
-  #status{width:auto;max-width:110px;text-align:center;font-size:7px}
+  #status{display:none}
 }
 
 </style>
@@ -257,7 +257,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v47';
+const ASSET_VERSION = 'v48';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
