@@ -99,8 +99,8 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
   aside{
     left:0;right:0;bottom:0;
     width:100%;
-    height:clamp(128px, 16dvh, 150px);
-    max-height:clamp(128px, 16dvh, 150px);
+    height:clamp(132px, 17.5dvh, 160px);
+    max-height:clamp(132px, 17.5dvh, 160px);
     padding:6px 6px calc(4px + env(safe-area-inset-bottom));
     display:flex;
     flex-direction:column;
@@ -117,7 +117,7 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     align-items:center;
     gap:0;
   }
-  .section-title{font-size:6px;line-height:1;margin:0 0 1px}
+  .section-title{font-size:6px;line-height:1.05;margin:1px 0 2px;white-space:nowrap}
   .swatches{
     width:auto;
     max-width:100%;
@@ -126,16 +126,16 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     justify-content:center;
     gap:3px;
     overflow:hidden;
-    padding:0;
+    padding:1px 0 0;
   }
   .swatches::-webkit-scrollbar{display:none}
   .swatch-wrap{
     flex:0 0 auto;
-    min-width:28px;
+    min-width:27px;
   }
-  .swatch{width:20px;height:20px}
-  .swatch:after{inset:-2px}
-  .label{margin-top:1px;font-size:5px;max-width:40px;line-height:1}
+  .swatch{width:18px;height:18px}
+  .swatch:after{inset:-1.5px}
+  .label{margin-top:2px;font-size:5px;max-width:40px;line-height:1.05}
   .lighting-row{
     width:auto;
     max-width:100%;
@@ -144,7 +144,7 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
     align-items:center;
     justify-content:center;
     gap:4px;
-    margin-top:1px;
+    margin-top:2px;
   }
   .lighting-controls{
     width:auto;
@@ -158,7 +158,17 @@ aside{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,
   .intensity-slider{height:3px}
   .actions{width:auto;justify-content:center}
   .action{padding:6px 11px;font-size:8px}
-  #status{display:none}
+  #status{
+    display:block;
+    min-width:0;
+    max-width:100%;
+    margin:1px 0 0;
+    font-size:6px;
+    line-height:1.1;
+    color:#888;
+    white-space:nowrap;
+    text-align:center;
+  }
 }
 
 </style>
@@ -258,7 +268,7 @@ const DEFAULT_CASING = 'ash-light-grey';
 
 // Bump this whenever the model/material files on GitHub are replaced.
 // This forces browsers/CDNs to fetch the latest assets.
-const ASSET_VERSION = 'v49';
+const ASSET_VERSION = 'v51';
 const versioned = url => `${url}?v=${ASSET_VERSION}`;
 
 const MODEL_URL = versioned(
@@ -853,11 +863,13 @@ function portraitFitTargetYOffset(modelHeight) {
   const panel = document.getElementById('panel');
   const stage = document.getElementById('stage');
   const stageRect = stage.getBoundingClientRect();
-  const visibleFraction = panel ? Math.max(0.58, Math.min(0.9, (panel.getBoundingClientRect().top - stageRect.top) / Math.max(1, stageRect.height))) : 0.75;
-  // Shift the camera target further down in portrait mode so the spa itself
-  // sits higher and is visually centred in the usable viewer area above the options.
-  // The extra offset is only applied to narrow portrait layouts.
-  return -modelHeight * (0.18 + (1 - visibleFraction) * 0.85);
+  const panelTop = panel ? (panel.getBoundingClientRect().top - stageRect.top) : stageRect.height * 0.82;
+  const viewerHeight = Math.max(1, panelTop);
+
+  // Centre the model in the actual visible viewer area above the options.
+  // Keep only a small natural upward bias so the spa doesn't sit on the bottom edge.
+  const centreBias = Math.min(0.035, viewerHeight / Math.max(1, stageRect.height) * 0.04);
+  return -modelHeight * centreBias;
 }
 
 function calculateDynamicFitDistance() {
